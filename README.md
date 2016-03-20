@@ -1,4 +1,4 @@
-# Tokamak
+# токамак
 
 Fusion Reactor for Rust
 
