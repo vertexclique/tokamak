@@ -1,0 +1,23 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "syntax-variables";
+
+atom-text-editor::shadow .meta.attribute.rust {
+  color: mix(#ff0, @syntax-text-color, 20%);
+}
+
+atom-text-editor::shadow .storage.modifier.lifetime.rust,
+atom-text-editor::shadow .entity.name.lifetime.rust {
+  color: mix(#0ff, @syntax-text-color, 70%);
+}
+
+atom-text-editor::shadow .keyword.unsafe.rust {
+  color: mix(#f00, @syntax-text-color, 40%);
+}
+
+@import "ui-variables";
+
+.tokamak {
+}
