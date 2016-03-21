@@ -26,7 +26,7 @@ class CargoView extends View
       'tokamak:clean': => @attachCargo('clean')
       'tokamak:build-run': => @attachCargo('build-run')
       'tokamak:rebuild': => @attachCargo('rebuild')
-      'tokamak:run': => @attachCargo('bin')
+      'tokamak:run': => @attachCargo('run')
 
     @miniEditor.on 'blur', => @close()
     atom.commands.add @element,
@@ -47,20 +47,32 @@ class CargoView extends View
     @miniEditor.focus()
 
   attachCargo: (@cmd) ->
+    @cargoCmdRunner(@cmd, @cargoCmdExitCallback)
+
+  cargoCmdExitCallback: (@cmd, code) =>
+    console.log code
+    if code != 0
+      atom.notifications.addError("Tokamak: Cargo #{@cmd} failed!", {
+        detail: "Cargo #{@cmd} exited with #{code}"
+      })
+    else
+      atom.notifications.addSuccess("Tokamak: Cargo #{@cmd} successful!")
+
+  cargoCmdRunner: (@cmd, callback) ->
     cargoPath = atom.config.get("tokamak.cargoBinPath")
     switch @cmd
       when "build"
-          @runCommand(cargoPath, ["build"], callback)
+          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
       when "clean"
-          @runCommand(cargoPath, ["clean"], callback)
+          @runCommand(cargoPath, ["clean"], exit = (code) => callback(@cmd, code))
       when "build-run"
-          @runCommand(cargoPath, ["build"], callback)
-          @runCommand(cargoPath, ["run"], callback)
+          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
+          @runCommand(cargoPath, ["run"], exit = (code) => callback(@cmd, code))
       when "rebuild"
-          @runCommand(cargoPath, ["clean"], callback)
-          @runCommand(cargoPath, ["build"], callback)
+          @runCommand(cargoPath, ["clean"], exit = (code) => callback(@cmd, code))
+          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
       when "run"
-          @runCommand(cargoPath, ["run"], callback)
+          @runCommand(cargoPath, ["run"], exit = (code) => callback(@cmd, code))
       else null
 
   serialize: ->
@@ -101,3 +113,6 @@ class CargoView extends View
 
   runCommand: (command, args, exit) ->
     new BufferedProcess({command, args, exit})
+
+  runCommandStdout: (command, args, stdout, exit) ->
+    new BufferedProcess({command, args, stdout, exit})
