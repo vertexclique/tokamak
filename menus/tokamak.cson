@@ -2,7 +2,7 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Toggle tokamak'
+      'label': 'Toggle Tokamak'
       'command': 'tokamak:toggle'
     }
   ]
@@ -31,6 +31,26 @@
         {
           'label': 'Clean'
           'command': 'tokamak:clean'
+        }
+        {
+          'label': 'Build & Run'
+          'command': 'tokamak:build-run'
+        }
+        {
+          'label': 'Rebuild'
+          'command': 'tokamak:rebuild'
+        }
+        {
+          'label': 'Run'
+          'command': 'tokamak:run'
+        }
+        {
+          'label': 'Test'
+          'command': 'tokamak:test'
+        }
+        {
+          'label': 'Benchmark'
+          'command': 'tokamak:bench'
         }
       ]
     ]
