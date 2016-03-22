@@ -49,30 +49,40 @@ class CargoView extends View
   attachCargo: (@cmd) ->
     @cargoCmdRunner(@cmd, @cargoCmdExitCallback)
 
-  cargoCmdExitCallback: (@cmd, code) =>
+  cargoCmdExitCallback: (@cmd, code, stdoutData, stderrData) =>
     console.log code
     if code != 0
       atom.notifications.addError("Tokamak: Cargo #{@cmd} failed!", {
-        detail: "Cargo #{@cmd} exited with #{code}"
+        detail: "#{stderrData}"
       })
     else
       atom.notifications.addSuccess("Tokamak: Cargo #{@cmd} successful!")
+
+  runCargo: (@cmd, cargoPath, command, callback) ->
+    [responseSuccess, responseError] = ["", ""]
+    @runCommandOut(
+      cargoPath
+      [command]
+      stderr = (data) -> responseError += data.toString()
+      stdout = (data) -> responseSuccess += data.toString()
+      exit = (code) => callback(@cmd, code, responseSuccess, responseError)
+      )
 
   cargoCmdRunner: (@cmd, callback) ->
     cargoPath = atom.config.get("tokamak.cargoBinPath")
     switch @cmd
       when "build"
-          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
+        @runCargo(@cmd, cargoPath, "build", callback)
       when "clean"
-          @runCommand(cargoPath, ["clean"], exit = (code) => callback(@cmd, code))
+        @runCargo(@cmd, cargoPath, "clean", callback)
       when "build-run"
-          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
-          @runCommand(cargoPath, ["run"], exit = (code) => callback(@cmd, code))
+        @runCargo(@cmd, cargoPath, "build", callback)
+        @runCargo(@cmd, cargoPath, "run", callback)
       when "rebuild"
-          @runCommand(cargoPath, ["clean"], exit = (code) => callback(@cmd, code))
-          @runCommand(cargoPath, ["build"], exit = (code) => callback(@cmd, code))
+        @runCargo(@cmd, cargoPath, "clean", callback)
+        @runCargo(@cmd, cargoPath, "build", callback)
       when "run"
-          @runCommand(cargoPath, ["run"], exit = (code) => callback(@cmd, code))
+        @runCargo(@cmd, cargoPath, "run", callback)
       else null
 
   serialize: ->
@@ -114,5 +124,5 @@ class CargoView extends View
   runCommand: (command, args, exit) ->
     new BufferedProcess({command, args, exit})
 
-  runCommandStdout: (command, args, stdout, exit) ->
-    new BufferedProcess({command, args, stdout, exit})
+  runCommandOut: (command, args, stderr, stdout, exit) ->
+    new BufferedProcess({command, args, stderr, stdout, exit})
