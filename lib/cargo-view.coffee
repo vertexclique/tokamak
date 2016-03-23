@@ -10,7 +10,7 @@ class CargoView extends View
   mode: null
 
   constructor: (serializedState) ->
-    super('CargoView')
+    super
 
   @content: ->
     @div class: 'tokamak-cargo', =>

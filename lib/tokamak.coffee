@@ -1,5 +1,6 @@
 TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
+MultirustListView = require './multirust-list-view'
 {CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
@@ -54,12 +55,14 @@ module.exports = Tokamak =
 
   tokamakView: null
   cargoView: null
+  multirustListView: null
   modalPanel: null
   subscriptions: null
 
   activate: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)
     @cargoView = new CargoView(state.cargoViewState)
+    @multirustListView = new MultirustListView
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
