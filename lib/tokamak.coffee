@@ -1,6 +1,6 @@
 TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
-MultirustListView = require './multirust-list-view'
+MultirustToolchainView = require './multirust-toolchain-view'
 {CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
@@ -55,14 +55,14 @@ module.exports = Tokamak =
 
   tokamakView: null
   cargoView: null
-  multirustListView: null
+  multirustToolchainView: null
   modalPanel: null
   subscriptions: null
 
   activate: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)
     @cargoView = new CargoView(state.cargoViewState)
-    @multirustListView = new MultirustListView
+    @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
@@ -74,12 +74,14 @@ module.exports = Tokamak =
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
+    @multirustToolchainView.destroy()
     @cargoView.destroy()
     @tokamakView.destroy()
 
   serialize: ->
     tokamakViewState: @tokamakView.serialize()
     cargoViewState: @cargoView.serialize()
+    multirustToolchainViewState: @multirustToolchainView.serialize()
 
   toggle: ->
     console.log 'Tokamak was toggled!'
