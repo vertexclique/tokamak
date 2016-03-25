@@ -71,12 +71,26 @@ module.exports = Tokamak =
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace', 'tokamak:toggle': => @toggle()
 
+  consumeToolBar: (toolBar) ->
+    @toolBar = toolBar 'tokamak'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'tools'
+      callback: 'tokamak:multirust-select-toolchain'
+      tooltip: 'Change Rust Toolchain'
+
+    @toolBar.onDidDestroy ->
+      @toolBar = null
+
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
     @multirustToolchainView.destroy()
     @cargoView.destroy()
     @tokamakView.destroy()
+    @toolBar?.removeItems()
 
   serialize: ->
     tokamakViewState: @tokamakView.serialize()
