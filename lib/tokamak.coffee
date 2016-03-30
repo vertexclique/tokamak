@@ -77,9 +77,22 @@ module.exports = Tokamak =
     @toolBar.addSpacer()
 
     @toolBar.addButton
+      icon: 'ion ion-cube'
+      callback: 'tokamak:multirust-select-toolchain'
+      tooltip: 'Create Project'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
       icon: 'tools'
       callback: 'tokamak:multirust-select-toolchain'
       tooltip: 'Change Rust Toolchain'
+
+    @toolBar.addButton
+      icon: 'ion ion-nuclear'
+      callback: 'tokamak:about'
+      tooltip: 'About Tokamak'
+
 
     @toolBar.onDidDestroy ->
       @toolBar = null
