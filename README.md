@@ -2,4 +2,4 @@
 
 Fusion Reactor for Rust
 
-![Tokamak](https://raw.githubusercontent.com/vertexclique/tokamak/master/images/tokamak.png)
+![Tokamak](http://i.imgur.com/b0t3Hsf.png)
