@@ -33,16 +33,8 @@
           'command': 'tokamak:clean'
         }
         {
-          'label': 'Build & Run'
-          'command': 'tokamak:build-run'
-        }
-        {
           'label': 'Rebuild'
           'command': 'tokamak:rebuild'
-        }
-        {
-          'label': 'Run'
-          'command': 'tokamak:run'
         }
         {
           'label': 'Test'

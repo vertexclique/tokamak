@@ -73,6 +73,9 @@ module.exports = Tokamak =
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView()
 
+    @projectPath ?= _.first(atom.workspace.getActivePaneItem().project.getPaths())
+    process.chdir(@projectPath)
+
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
 
@@ -136,8 +139,16 @@ module.exports = Tokamak =
     else
       @modal.show()
 
-  createCargoBinary: ->
-    console.log 'Creating Cargo binary project!'
+  detectBinaries: ->
+    for name in atom.config.get('tokamak')
+      [responseSuccess, responseError] = ["", ""]
+      @runCommandOut(
+        "which"
+        [command]
+        stderr = (data) -> responseError += data.toString()
+        stdout = (data) -> responseSuccess += data.toString()
+        exit = (code) => callback(@cmd, code, responseSuccess, responseError)
+        )
 
-  createCargoLib: ->
-    console.log 'Creating Cargo library project!'
+  runCommandOut: (command, args, stderr, stdout, exit) ->
+    new BufferedProcess({command, args, stderr, stdout, exit})

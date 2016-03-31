@@ -8,6 +8,7 @@ module.exports =
 class CargoView extends View
   previouslyFocusedElement: null
   mode: null
+  projectPath: null
 
   constructor: (serializedState) ->
     super
@@ -24,9 +25,7 @@ class CargoView extends View
       'tokamak:create-cargo-binary': => @attach('bin')
       'tokamak:build': => @attachCargo('build')
       'tokamak:clean': => @attachCargo('clean')
-      'tokamak:build-run': => @attachCargo('build-run')
       'tokamak:rebuild': => @attachCargo('rebuild')
-      'tokamak:run': => @attachCargo('run')
 
     @miniEditor.on 'blur', => @close()
     atom.commands.add @element,
@@ -75,14 +74,9 @@ class CargoView extends View
         @runCargo(@cmd, cargoPath, "build", callback)
       when "clean"
         @runCargo(@cmd, cargoPath, "clean", callback)
-      when "build-run"
-        @runCargo(@cmd, cargoPath, "build", callback)
-        @runCargo(@cmd, cargoPath, "run", callback)
       when "rebuild"
         @runCargo(@cmd, cargoPath, "clean", callback)
         @runCargo(@cmd, cargoPath, "build", callback)
-      when "run"
-        @runCargo(@cmd, cargoPath, "run", callback)
       else null
 
   serialize: ->
