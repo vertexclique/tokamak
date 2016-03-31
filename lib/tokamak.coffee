@@ -2,6 +2,7 @@ TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
 MultirustToolchainView = require './multirust-toolchain-view'
 CreateProjectView = require './create-project-view'
+AboutView = require './about-view'
 
 {CompositeDisposable} = require 'atom'
 
@@ -59,8 +60,10 @@ module.exports = Tokamak =
   cargoView: null
   multirustToolchainView: null
   createProjectView: null
+  aboutView: null
 
   modalPanel: null
+  aboutModalPanel: null
   subscriptions: null
 
   activate: (state) ->
@@ -68,13 +71,18 @@ module.exports = Tokamak =
     @cargoView = new CargoView(state.cargoViewState)
     @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
+    @aboutView = new AboutView()
+
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
+    @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'tokamak:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'tokamak:toggle': => @toggle(@modalPanel)
+      'tokamak:about': => @toggle(@aboutModalPanel)
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
@@ -105,11 +113,13 @@ module.exports = Tokamak =
 
   deactivate: ->
     @modalPanel.destroy()
+    @aboutModalPanel.destroy()
     @subscriptions.dispose()
     @multirustToolchainView.destroy()
     @cargoView.destroy()
     @tokamakView.destroy()
     @createProjectView.destroy()
+    @aboutView.destroy()
     @toolBar?.removeItems()
 
   serialize: ->
@@ -118,14 +128,13 @@ module.exports = Tokamak =
     multirustToolchainViewState: @multirustToolchainView.serialize()
     createProjectViewState: @createProjectView.serialize()
 
-  toggle: ->
-    console.log 'Tokamak was toggled!'
+  toggle: (@modal)->
+    console.log 'Modal was toggled!'
 
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
+    if @modal.isVisible()
+      @modal.hide()
     else
-      @modalPanel.show()
-
+      @modal.show()
 
   createCargoBinary: ->
     console.log 'Creating Cargo binary project!'
