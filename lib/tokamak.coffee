@@ -83,7 +83,7 @@ module.exports = Tokamak =
 
     @toolBar.addButton
       icon: 'ion ion-cube'
-      callback: 'tokamak:multirust-select-toolchain'
+      callback: 'tokamak:create-project'
       tooltip: 'Create Project'
 
     @toolBar.addSpacer()
@@ -97,6 +97,8 @@ module.exports = Tokamak =
       icon: 'ion ion-nuclear'
       callback: 'tokamak:about'
       tooltip: 'About Tokamak'
+
+    @toolBar.addSpacer()
 
     @toolBar.onDidDestroy ->
       @toolBar = null

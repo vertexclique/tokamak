@@ -71,7 +71,7 @@ class MultirustToolchainView extends SelectListView
     @items = _.compact(stdoutData.split('\n'));
 
   viewForItem: (item) ->
-    "<li>#{item}</li>"
+    "<li><span class='ion-settings'></span> #{item}</li>"
 
   confirmed: (item) ->
     console.info("Tokamak: About the change toolchain #{item}")

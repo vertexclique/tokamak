@@ -9,5 +9,6 @@
 # https://atom.io/docs/latest/behind-atom-keymaps-in-depth
 'atom-workspace':
   'ctrl-alt-o': 'tokamak:toggle',
+  'ctrl-alt-p': 'tokamak:create-project',
   'ctrl-alt-l': 'tokamak:create-cargo-lib',
   'ctrl-alt-b': 'tokamak:create-cargo-binary'

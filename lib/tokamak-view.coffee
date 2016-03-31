@@ -9,7 +9,7 @@ class TokamakView
     message = document.createElement('div')
     message.textContent = "The Tokamak package is Alive! It's ALIVE!"
     message.classList.add('message')
-    #@element.appendChild(message)
+    @element.appendChild(message)
     #sleep 4
     #@element.remove(message)
 
@@ -22,3 +22,6 @@ class TokamakView
 
   getElement: ->
     @element
+
+  cancelled: ->
+    @element.hide()
