@@ -93,9 +93,31 @@ module.exports = Tokamak =
     @toolBar.addSpacer()
 
     @toolBar.addButton
-      icon: 'ion ion-cube'
+      icon: 'package'
       callback: 'tokamak:create-project'
       tooltip: 'Create Project'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'ion ion-hammer'
+      callback: 'tokamak:build'
+      tooltip: 'Build'
+
+    @toolBar.addButton
+      icon: 'fi fi-x'
+      callback: 'tokamak:clean'
+      tooltip: 'Clean'
+
+    @toolBar.addButton
+      icon: 'ion ion-refresh'
+      callback: 'tokamak:rebuild'
+      tooltip: 'Rebuild'
+
+    @toolBar.addButton
+      icon: 'terminal'
+      callback: 'tokamak:clean'
+      tooltip: 'Terminal'
 
     @toolBar.addSpacer()
 
