@@ -4,10 +4,11 @@
 
 **Fusion Reactor for Rust**
 
+* Syntax highlighting
 * Creating Cargo project
 * Support for Cargo projects
 * Code Completion with Racer
-*
+* Managing Rust toolchains
 
 ## License
 
