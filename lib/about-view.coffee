@@ -1,3 +1,5 @@
+path = require 'path'
+fs = require 'fs-plus'
 {$} = require 'atom-space-pen-views'
 
 module.exports =

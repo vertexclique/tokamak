@@ -5,6 +5,7 @@ CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 
 _ = require 'underscore-plus'
+packageDeps = require 'atom-package-deps'
 {BufferedProcess, CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
@@ -73,6 +74,10 @@ module.exports = Tokamak =
     @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView()
+
+    packageDeps.install()
+      .then ->
+        atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
