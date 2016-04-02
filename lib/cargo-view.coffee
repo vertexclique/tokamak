@@ -20,7 +20,7 @@ class CargoView extends View
       @div class: 'message', outlet: 'message'
 
   initialize: ->
-    @projectPath ?= _.first(atom.workspace.getActivePaneItem().project.getPaths())
+    @projectPath ?= _.first(atom.project.getPaths())
     process.chdir(@projectPath)
 
     @commandSubscription = atom.commands.add 'atom-workspace',
