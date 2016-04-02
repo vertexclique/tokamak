@@ -20,6 +20,9 @@ class CargoView extends View
       @div class: 'message', outlet: 'message'
 
   initialize: ->
+    @projectPath ?= _.first(atom.workspace.getActivePaneItem().project.getPaths())
+    process.chdir(@projectPath)
+
     @commandSubscription = atom.commands.add 'atom-workspace',
       'tokamak:create-cargo-lib': => @attach('lib')
       'tokamak:create-cargo-binary': => @attach('bin')

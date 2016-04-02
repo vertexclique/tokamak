@@ -4,7 +4,8 @@ MultirustToolchainView = require './multirust-toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 
-{CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
+{BufferedProcess, CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
   # Config schema
@@ -34,7 +35,7 @@ module.exports = Tokamak =
       type: 'string'
       default: '/usr/local/src/rust/src/'
       order: 5
-    cargoHome:
+    cargoHomePath:
       title: 'Cargo home directory (optional)'
       type: 'string'
       description: 'Needed when providing completions for Cargo crates when Cargo is installed in a non-standard location.'
@@ -72,9 +73,6 @@ module.exports = Tokamak =
     @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView()
-
-    @projectPath ?= _.first(atom.workspace.getActivePaneItem().project.getPaths())
-    process.chdir(@projectPath)
 
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
@@ -160,17 +158,6 @@ module.exports = Tokamak =
       @modal.hide()
     else
       @modal.show()
-
-  detectBinaries: ->
-    for name in atom.config.get('tokamak')
-      [responseSuccess, responseError] = ["", ""]
-      @runCommandOut(
-        "which"
-        [command]
-        stderr = (data) -> responseError += data.toString()
-        stdout = (data) -> responseSuccess += data.toString()
-        exit = (code) => callback(@cmd, code, responseSuccess, responseError)
-        )
 
   runCommandOut: (command, args, stderr, stdout, exit) ->
     new BufferedProcess({command, args, stderr, stdout, exit})
