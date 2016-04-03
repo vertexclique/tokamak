@@ -20,9 +20,6 @@ class CargoView extends View
       @div class: 'message', outlet: 'message'
 
   initialize: ->
-    @projectPath ?= _.first(atom.project.getPaths())
-    process.chdir(@projectPath)
-
     @commandSubscription = atom.commands.add 'atom-workspace',
       'tokamak:create-cargo-lib': => @attach('lib')
       'tokamak:create-cargo-binary': => @attach('bin')
@@ -72,6 +69,8 @@ class CargoView extends View
 
   cargoCmdRunner: (@cmd, callback) ->
     cargoPath = atom.config.get("tokamak.cargoBinPath")
+    @projectPath ?= _.first(atom.project.getPaths())
+    process.chdir(@projectPath)
     switch @cmd
       when "build"
         @runCargo(@cmd, cargoPath, "build", callback)

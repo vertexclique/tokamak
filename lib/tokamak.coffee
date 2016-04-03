@@ -3,6 +3,7 @@ CargoView = require './cargo-view'
 MultirustToolchainView = require './multirust-toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
+pjson = require '../package.json'
 
 _ = require 'underscore-plus'
 packageDeps = require 'atom-package-deps'
@@ -75,9 +76,12 @@ module.exports = Tokamak =
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView()
 
-    packageDeps.install()
-      .then ->
-        atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
+    packageList = _.map(atom.packages.getLoadedPackages(), (pkg) -> return pkg.name)
+    tbInstalled = _.difference(pjson["package-deps"], packageList);
+    if tbInstalled.length != 0
+      packageDeps.install()
+        .then ->
+          atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)

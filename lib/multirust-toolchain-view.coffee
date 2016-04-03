@@ -66,7 +66,8 @@ class MultirustToolchainView extends SelectListView
         detail: "#{stderrData}"
       })
     else
-      atom.notifications.addInfo("Tokamak: Toolchains detected successfully!")
+      if atom.devMode
+        atom.notifications.addInfo("Tokamak: Toolchains detected successfully!")
 
     @items = _.compact(stdoutData.split('\n'));
 
