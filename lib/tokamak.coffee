@@ -89,7 +89,7 @@ module.exports = Tokamak =
         .then ->
           atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
-    if atom.config.get('binaryDetection')
+    if atom.config.get('tokamak.binaryDetection')
       @detectBinaries()
 
     @watchConfig()
@@ -104,6 +104,7 @@ module.exports = Tokamak =
     @subscriptions.add atom.commands.add 'atom-workspace',
       'tokamak:toggle': => @toggle(@modalPanel)
       'tokamak:about': => @toggle(@aboutModalPanel)
+      'tokamak:detect-binaries': => @detectBinaries()
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
@@ -138,6 +139,11 @@ module.exports = Tokamak =
       tooltip: 'Terminal'
 
     @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'eye'
+      callback: 'tokamak:detect-binaries'
+      tooltip: 'Detect Binaries'
 
     @toolBar.addButton
       icon: 'tools'
@@ -198,9 +204,13 @@ module.exports = Tokamak =
             atom.config.set("tokamak.rustcBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
             atom.config.set("linter-rust.rustcPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
       else
-        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in $PATH",
+        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
         {
-          detail: "#{data.stderrData}"
+          detail: "If you have a #{pkg} executable, set it in токамак settings.
+          If you are sure that PATH environment variable is set and includes
+          #{pkg}, please start Atom from command line.
+          ERROR: #{data.stderrData}"
+          dismissable: true
         })
 
   watchConfig: ->
