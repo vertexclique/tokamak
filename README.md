@@ -2,7 +2,8 @@
 
 ![Tokamak](http://i.imgur.com/b0t3Hsf.png)
 
-**Fusion Reactor for Rust**
+**Fusion Reactor for Rust** - 
+[![apm](https://img.shields.io/apm/v/tokamak.svg?style=flat-square)](https://atom.io/packages/tokamak)
 
 * Syntax highlighting
 * Creating Cargo project
