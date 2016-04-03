@@ -5,6 +5,7 @@ CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 pjson = require '../package.json'
 
+child_process = require 'child_process'
 _ = require 'underscore-plus'
 packageDeps = require 'atom-package-deps'
 {BufferedProcess, CompositeDisposable} = require 'atom'
@@ -12,50 +13,55 @@ packageDeps = require 'atom-package-deps'
 module.exports = Tokamak =
   # Config schema
   config:
+    binaryDetection:
+      title: 'Detect binaries on startup'
+      type: 'boolean'
+      default: true
+      order: 1
     rustcBinPath:
       title: 'Path to the Rust compiler'
       type: 'string'
       default: '/usr/local/bin/rustc'
-      order: 1
+      order: 2
     cargoBinPath:
       title: 'Path to the Cargo package manager'
       type: 'string'
       default: '/usr/local/bin/cargo'
-      order: 2
+      order: 3
     multirustBinPath:
       title: 'Path to the Multirust rust installation manager'
       type: 'string'
       default: '/usr/local/bin/multirust'
-      order: 3
+      order: 4
     racerBinPath:
       title: 'Path to the Racer executable'
       type: 'string'
       default: '/usr/local/bin/racer'
-      order: 4
+      order: 5
     rustSrcPath:
       title: 'Path to the Rust source code directory'
       type: 'string'
       default: '/usr/local/src/rust/src/'
-      order: 5
+      order: 6
     cargoHomePath:
       title: 'Cargo home directory (optional)'
       type: 'string'
       description: 'Needed when providing completions for Cargo crates when Cargo is installed in a non-standard location.'
       default: ''
-      order: 6
+      order: 7
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
       description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
-      order: 7
+      order: 8
     show:
       title: 'Show position for editor with definition'
       description: 'Choose one: Right, or New. If your view is vertically split, choosing Right will open the definition in the rightmost pane.'
       type: 'string'
       default: 'New'
       enum: ['Right', 'New']
-      order: 8
+      order: 9
 
     #TODO: Write autodetection of toolchain
 
@@ -82,6 +88,11 @@ module.exports = Tokamak =
       packageDeps.install()
         .then ->
           atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
+
+    if atom.config.get('binaryDetection')
+      @detectBinaries()
+
+    @watchConfig()
 
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
@@ -168,5 +179,53 @@ module.exports = Tokamak =
     else
       @modal.show()
 
-  runCommandOut: (command, args, stderr, stdout, exit) ->
-    new BufferedProcess({command, args, stderr, stdout, exit})
+  detectBinaries: ->
+    for pkg in ["cargo", "racer", "multirust", "rustc"]
+      console.log(pkg)
+      data = @runCommandOut("which", [pkg])
+      console.log(data)
+      if data.status == 0 && data.stdoutData.length >= 0
+        switch pkg
+          when "cargo"
+            atom.config.set("tokamak.cargoBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+            atom.config.set("linter-rust.cargoPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+          when "racer"
+            atom.config.set("tokamak.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+            atom.config.set("racer.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+          when "multirust"
+            atom.config.set("tokamak.multirustBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+          when "rustc"
+            atom.config.set("tokamak.rustcBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+            atom.config.set("linter-rust.rustcPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+      else
+        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in $PATH",
+        {
+          detail: "#{data.stderrData}"
+        })
+
+  watchConfig: ->
+    atom.config.onDidChange "tokamak.autocompleteBlacklist", ({newValue, oldValue}) ->
+      atom.config.set("racer.autocompleteBlacklist", newValue)
+    atom.config.onDidChange "tokamak.cargoBinPath", ({newValue, oldValue}) ->
+      atom.config.set("linter-rust.cargoPath", newValue)
+    atom.config.onDidChange "tokamak.cargoHomePath", ({newValue, oldValue}) ->
+      atom.config.set("racer.cargoHome", newValue)
+    atom.config.onDidChange "tokamak.racerBinPath", ({newValue, oldValue}) ->
+      atom.config.set("racer.racerBinPath", newValue)
+    atom.config.onDidChange "tokamak.rustSrcPath", ({newValue, oldValue}) ->
+      atom.config.set("racer.rustSrcPath", newValue)
+    atom.config.onDidChange "tokamak.rustcBinPath", ({newValue, oldValue}) ->
+      atom.config.set("linter-rust.rustcPath", newValue)
+    atom.config.onDidChange "tokamak.show", ({newValue, oldValue}) ->
+      atom.config.set('racer.show', newValue)
+
+  runCommandOut: (executable, args) ->
+    try
+      result = child_process.spawnSync(executable, args);
+      return {
+        status: result.status,
+        stdoutData: result.stdout.toString(),
+        stderrData: result.stderr.toString()
+      }
+    catch e
+      return false;
