@@ -3,11 +3,9 @@ CargoView = require './cargo-view'
 MultirustToolchainView = require './multirust-toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
-pjson = require '../package.json'
 
-child_process = require 'child_process'
-_ = require 'underscore-plus'
-packageDeps = require 'atom-package-deps'
+Utils = require './utils'
+
 {BufferedProcess, CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
@@ -81,19 +79,14 @@ module.exports = Tokamak =
     @cargoView = new CargoView(state.cargoViewState)
     @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
-    @aboutView = new AboutView()
+    @aboutView = new AboutView(state.aboutView)
 
-    packageList = _.map(atom.packages.getLoadedPackages(), (pkg) -> return pkg.name)
-    tbInstalled = _.difference(pjson["package-deps"], packageList);
-    if tbInstalled.length != 0
-      packageDeps.install()
-        .then ->
-          atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
+    Utils.installDependencies()
 
     if atom.config.get('tokamak.binaryDetection')
-      @detectBinaries()
+      Utils.detectBinaries()
 
-    @watchConfig()
+    Utils.watchConfig()
 
     @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
     @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
@@ -104,8 +97,7 @@ module.exports = Tokamak =
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
       'tokamak:toggle': => @toggle(@modalPanel)
-      'tokamak:about': => @toggle(@aboutModalPanel)
-      'tokamak:detect-binaries': => @detectBinaries()
+      'tokamak:detect-binaries': => detectBinaries()
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
@@ -185,58 +177,3 @@ module.exports = Tokamak =
       @modal.hide()
     else
       @modal.show()
-
-  detectBinaries: ->
-    for pkg in ["cargo", "racer", "multirust", "rustc"]
-      console.log(pkg)
-      data = @runCommandOut("which", [pkg])
-      console.log(data)
-      if data.status == 0 && data.stdoutData.length >= 0
-        switch pkg
-          when "cargo"
-            atom.config.set("tokamak.cargoBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-            atom.config.set("linter-rust.cargoPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-          when "racer"
-            atom.config.set("tokamak.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-            atom.config.set("racer.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-          when "multirust"
-            atom.config.set("tokamak.multirustBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-          when "rustc"
-            atom.config.set("tokamak.rustcBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-            atom.config.set("linter-rust.rustcPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-      else
-        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
-        {
-          detail: "If you have a #{pkg} executable, set it in токамак settings.
-          If you are sure that PATH environment variable is set and includes
-          #{pkg}, please start Atom from command line.
-          ERROR: #{data.stderrData}"
-          dismissable: true
-        })
-
-  watchConfig: ->
-    atom.config.onDidChange "tokamak.autocompleteBlacklist", ({newValue, oldValue}) ->
-      atom.config.set("racer.autocompleteBlacklist", newValue)
-    atom.config.onDidChange "tokamak.cargoBinPath", ({newValue, oldValue}) ->
-      atom.config.set("linter-rust.cargoPath", newValue)
-    atom.config.onDidChange "tokamak.cargoHomePath", ({newValue, oldValue}) ->
-      atom.config.set("racer.cargoHome", newValue)
-    atom.config.onDidChange "tokamak.racerBinPath", ({newValue, oldValue}) ->
-      atom.config.set("racer.racerBinPath", newValue)
-    atom.config.onDidChange "tokamak.rustSrcPath", ({newValue, oldValue}) ->
-      atom.config.set("racer.rustSrcPath", newValue)
-    atom.config.onDidChange "tokamak.rustcBinPath", ({newValue, oldValue}) ->
-      atom.config.set("linter-rust.rustcPath", newValue)
-    atom.config.onDidChange "tokamak.show", ({newValue, oldValue}) ->
-      atom.config.set('racer.show', newValue)
-
-  runCommandOut: (executable, args) ->
-    try
-      result = child_process.spawnSync(executable, args);
-      return {
-        status: result.status,
-        stdoutData: result.stdout.toString(),
-        stderrData: result.stderr.toString()
-      }
-    catch e
-      return false;
