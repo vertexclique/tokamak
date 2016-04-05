@@ -124,6 +124,11 @@ module.exports = Tokamak =
       tooltip: 'Build'
 
     @toolBar.addButton
+      icon: 'ion ion-play'
+      callback: 'tokamak:run'
+      tooltip: 'Run'
+
+    @toolBar.addButton
       icon: 'fi fi-x'
       callback: 'tokamak:clean'
       tooltip: 'Clean'

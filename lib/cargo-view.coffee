@@ -26,6 +26,7 @@ class CargoView extends View
       'tokamak:build': => @attachCargo('build')
       'tokamak:clean': => @attachCargo('clean')
       'tokamak:rebuild': => @attachCargo('rebuild')
+      'tokamak:run': => @attachCargo('run')
 
     @miniEditor.on 'blur', => @close()
     atom.commands.add @element,
@@ -55,7 +56,9 @@ class CargoView extends View
         detail: "#{stderrData}"
       })
     else
-      atom.notifications.addSuccess("Tokamak: Cargo #{@cmd} successful!")
+      atom.notifications.addSuccess("Tokamak: Cargo #{@cmd} successful!", {
+        detail: "#{stdoutData}"
+      })
 
   runCargo: (@cmd, cargoPath, command, callback) ->
     [responseSuccess, responseError] = ["", ""]
@@ -79,6 +82,8 @@ class CargoView extends View
       when "rebuild"
         @runCargo(@cmd, cargoPath, "clean", callback)
         @runCargo(@cmd, cargoPath, "build", callback)
+      when "run"
+        @runCargo(@cmd, cargoPath, "run", callback)
       else null
 
   serialize: ->
