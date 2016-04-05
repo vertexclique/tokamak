@@ -16,6 +16,7 @@ module.exports = Tokamak =
     binaryDetection:
       title: 'Detect binaries on startup'
       type: 'boolean'
+      description: 'Set toolchain executables if it is found under PATH.'
       default: true
       order: 1
     rustcBinPath:
