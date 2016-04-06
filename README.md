@@ -2,7 +2,7 @@
 
 ![Tokamak](http://i.imgur.com/b0t3Hsf.png)
 
-**Fusion Reactor for Rust** - 
+**Fusion Reactor for Rust** -
 [![apm](https://img.shields.io/apm/v/tokamak.svg?style=flat-square)](https://atom.io/packages/tokamak)
 
 * Syntax highlighting
@@ -10,6 +10,10 @@
 * Support for Cargo projects
 * Code Completion with Racer
 * Managing Rust toolchains
+* Code Linting
+
+## Contributing
+ Hacking rules are written in [HACKING.md](https://github.com/vertexclique/tokamak/blob/master/HACKING.md).
 
 ## License
 

@@ -7,9 +7,23 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/behind-atom-keymaps-in-depth
-'atom-workspace':
-  'ctrl-alt-o': 'tokamak:toggle',
-  'ctrl-alt-a': 'tokamak:about',
-  'ctrl-alt-p': 'tokamak:create-project',
-  'ctrl-alt-l': 'tokamak:create-cargo-lib',
+'.platform-darwin atom-workspace':
+  'ctrl-alt-a': 'tokamak:about'
+  'ctrl-alt-p': 'tokamak:create-project'
+  'ctrl-alt-l': 'tokamak:create-cargo-lib'
   'ctrl-alt-b': 'tokamak:create-cargo-binary'
+  'ctrl-alt-r': 'tokamak:run'
+  'ctrl-alt-s': 'tokamak:test'
+  'ctrl-alt-e': 'tokamak:build'
+  'ctrl-alt-c': 'tokamak:clean'
+  'ctrl-alt-w': 'tokamak:rebuild'
+'.platform-linux atom-workspace, .platform-win32 atom-workspace':
+  'ctrl-alt-a': 'tokamak:about'
+  'ctrl-alt-p': 'tokamak:create-project'
+  'ctrl-alt-l': 'tokamak:create-cargo-lib'
+  'ctrl-alt-b': 'tokamak:create-cargo-binary'
+  'ctrl-alt-r': 'tokamak:run'
+  'ctrl-alt-s': 'tokamak:test'
+  'ctrl-alt-e': 'tokamak:build'
+  'ctrl-alt-c': 'tokamak:clean'
+  'ctrl-alt-w': 'tokamak:rebuild'

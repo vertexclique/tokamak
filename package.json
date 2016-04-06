@@ -1,7 +1,7 @@
 {
   "name": "tokamak",
   "main": "./lib/tokamak",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Fusion Reactor for Rust - Atom Rust IDE",
   "keywords": [],
   "author": "Mahmut Bulut <vertexclique@gmail.com>",
@@ -25,12 +25,18 @@
       "versions": {
         "^0.1.0": "consumeToolBar"
       }
+    },
+    "runInTerminal": {
+      "versions": {
+        "^0.14.5": "consumeRunInTerminal"
+      }
     }
   },
   "package-deps": [
     "tool-bar",
     "linter",
     "linter-rust",
-    "racer"
+    "racer",
+    "tokamak-terminal"
   ]
 }
