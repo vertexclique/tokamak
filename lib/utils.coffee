@@ -3,6 +3,7 @@ pjson = require '../package.json'
 
 _ = require 'underscore-plus'
 packageDeps = require 'atom-package-deps'
+{runInTerminal} = require './terminal'
 
 module.exports =
 class Utils
@@ -71,3 +72,12 @@ class Utils
       atom.config.set("linter-rust.rustcPath", newValue)
     atom.config.onDidChange "tokamak.show", ({newValue, oldValue}) ->
       atom.config.set('racer.show', newValue)
+
+  @openTerminal: (cmd) ->
+    status = runInTerminal([cmd]);
+    if -1 == status
+      atom.notifications.addError('Tokamak: Terminal service is not registered.', {
+        detail: 'Make sure that "tokamak-terminal" package is installed.',
+        dismissable: true,
+      });
+    status

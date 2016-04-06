@@ -6,10 +6,12 @@ AboutView = require './about-view'
 
 Utils = require './utils'
 
+{consumeRunInTerminal} = require './terminal'
 {BufferedProcess, CompositeDisposable} = require 'atom'
 
 module.exports = Tokamak =
   # Config schema
+  consumeRunInTerminal: consumeRunInTerminal
   config:
     binaryDetection:
       title: 'Detect binaries on startup'
@@ -88,16 +90,15 @@ module.exports = Tokamak =
 
     Utils.watchConfig()
 
-    @modalPanel = atom.workspace.addModalPanel(item: @tokamakView.getElement(), visible: false)
-    @aboutModalPanel = atom.workspace.addModalPanel(item: @aboutView.getElement(), visible: false)
-
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
-      'tokamak:toggle': => @toggle(@modalPanel)
-      'tokamak:detect-binaries': => detectBinaries()
+      'tokamak:detect-binaries': => Utils.detectBinaries()
+      'tokamak:settings': => atom.workspace.open('atom://config/packages/tokamak/')
+      'tokamak:run': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' run')
+      'tokamak:test': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' test')
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
@@ -127,8 +128,18 @@ module.exports = Tokamak =
       tooltip: 'Rebuild'
 
     @toolBar.addButton
+      icon: 'ion ion-play'
+      callback: 'tokamak:run'
+      tooltip: 'Cargo Run'
+
+    @toolBar.addButton
+      icon: 'fi fi-check'
+      callback: 'tokamak:test'
+      tooltip: 'Cargo Test'
+
+    @toolBar.addButton
       icon: 'terminal'
-      callback: 'tokamak:clean'
+      callback: 'tokamak-terminal:new'
       tooltip: 'Terminal'
 
     @toolBar.addSpacer()
@@ -142,6 +153,11 @@ module.exports = Tokamak =
       icon: 'tools'
       callback: 'tokamak:multirust-select-toolchain'
       tooltip: 'Change Rust Toolchain'
+
+    @toolBar.addButton
+      icon: 'gear'
+      callback: 'tokamak:settings'
+      tooltip: 'Settings'
 
     @toolBar.addButton
       icon: 'ion ion-nuclear'
