@@ -5,6 +5,9 @@
   'allow!':
     'prefix': 'allow!'
     'body': '#![allow(${1:lint})]'
+  'assert!':
+    'prefix': 'assert!'
+    'body': 'assert!(${1:expression});'
   'deny':
     'prefix': 'deny'
     'body': '#[deny(${1:lint})]'
