@@ -30,6 +30,40 @@ class Utils
           atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
   @detectBinaries: ->
+    if process.platform is "win32"
+      @detectWindowsBinaries()
+    else
+      @detectUnixBinaries()
+
+  detectWindowsBinaries: ->
+    for pkg in ["cargo", "racer", "multirust", "rustc"]
+      console.log(pkg)
+      data = @runCommandOut("where", [pkg])
+      console.log(data)
+      if data.status == 0 && data.stdoutData.length >= 0
+        switch pkg
+          when "cargo"
+            atom.config.set("tokamak.cargoBinPath", data.stdoutData)
+            atom.config.set("linter-rust.cargoPath", data.stdoutData)
+          when "racer"
+            atom.config.set("tokamak.racerBinPath", data.stdoutData)
+            atom.config.set("racer.racerBinPath", data.stdoutData)
+          when "multirust"
+            atom.config.set("tokamak.multirustBinPath", data.stdoutData)
+          when "rustc"
+            atom.config.set("tokamak.rustcBinPath", data.stdoutData)
+            atom.config.set("linter-rust.rustcPath", data.stdoutData)
+      else
+        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
+        {
+          detail: "If you have a #{pkg} executable, set it in токамак settings.
+          If you are sure that PATH environment variable is set and includes
+          #{pkg}, please start Atom from command line.
+          ERROR: #{data.stderrData}"
+          dismissable: true
+        })
+
+  detectUnixBinaries: ->
     for pkg in ["cargo", "racer", "multirust", "rustc"]
       console.log(pkg)
       data = @runCommandOut("which", [pkg])
