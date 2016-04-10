@@ -3,21 +3,21 @@ _ = require 'underscore-plus'
 {$, SelectListView} = require 'atom-space-pen-views'
 
 module.exports =
-class MultirustToolchainView extends SelectListView
+class RustUpToolchainView extends SelectListView
   previouslyFocusedElement: null
   cmd: null
   items: null
-  multirustBinPath: null
+  rustupBinPath: null
 
   constructor: (serializedState) ->
     super
 
   initialize: ->
     super
-    @multirustBinPath = atom.config.get("tokamak.multirustBinPath")
+    @rustupBinPath = atom.config.get("tokamak.rustupBinPath")
     @getToolchainList(@items, @toolchainExitCallback)
     @commandSubscription = atom.commands.add 'atom-workspace',
-    'tokamak:multirust-select-toolchain': => @attach()
+    'tokamak:rustup-select-toolchain': => @attach()
 
   attach: () ->
     @addClass('overlay from-top')
@@ -31,14 +31,14 @@ class MultirustToolchainView extends SelectListView
   changeToolchain: (item, callback) ->
       [responseSuccess, responseError] = ["", ""]
       @runCommandOut(
-        @multirustBinPath
+        @rustupBinPath
         ['default', item]
         stderr = (data) -> responseError += data.toString()
         stdout = (data) -> responseSuccess += data.toString()
         exit = (code) => callback(item, code, responseSuccess, responseError)
       )
 
-  multirustExitCallback: (item, code, stdoutData, stderrData) =>
+  rustupExitCallback: (item, code, stdoutData, stderrData) =>
     if code != 0
       atom.notifications.addError("Tokamak: Failed to change toolchain to #{item}", {
         detail: "#{stderrData}"
@@ -53,8 +53,8 @@ class MultirustToolchainView extends SelectListView
       @cmd = "Listing toolchains"
       [responseSuccess, responseError] = ["", ""]
       @runCommandOut(
-        @multirustBinPath
-        ['list-toolchains']
+        @rustupBinPath
+        ['toolchain', 'list']
         stderr = (data) -> responseError += data.toString()
         stdout = (data) -> responseSuccess += data.toString()
         exit = (code) => callback(@cmd, code, responseSuccess, responseError, @items)
@@ -76,7 +76,7 @@ class MultirustToolchainView extends SelectListView
 
   confirmed: (item) ->
     console.info("Tokamak: About the change toolchain #{item}")
-    @changeToolchain(item, @multirustExitCallback)
+    @changeToolchain(item, @rustupExitCallback)
 
   cancelled: ->
     console.log("This view was cancelled")

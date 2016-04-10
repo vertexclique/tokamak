@@ -1,6 +1,6 @@
 TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
-MultirustToolchainView = require './multirust-toolchain-view'
+RustUpToolchainView = require './rustup-toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 
@@ -29,10 +29,10 @@ module.exports = Tokamak =
       type: 'string'
       default: '/usr/local/bin/cargo'
       order: 3
-    multirustBinPath:
-      title: 'Path to the Multirust rust installation manager'
+    rustupBinPath:
+      title: 'Path to the RustUp rust installation manager'
       type: 'string'
-      default: '/usr/local/bin/multirust'
+      default: '/usr/local/bin/rustup'
       order: 4
     racerBinPath:
       title: 'Path to the Racer executable'
@@ -68,7 +68,7 @@ module.exports = Tokamak =
 
   tokamakView: null
   cargoView: null
-  multirustToolchainView: null
+  rustupToolchainView: null
   createProjectView: null
   aboutView: null
 
@@ -79,7 +79,7 @@ module.exports = Tokamak =
   activate: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)
     @cargoView = new CargoView(state.cargoViewState)
-    @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
+    @rustupToolchainView = new RustUpToolchainView(state.rustupToolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView(state.aboutView)
 
@@ -151,7 +151,7 @@ module.exports = Tokamak =
 
     @toolBar.addButton
       icon: 'tools'
-      callback: 'tokamak:multirust-select-toolchain'
+      callback: 'tokamak:rustup-select-toolchain'
       tooltip: 'Change Rust Toolchain'
 
     @toolBar.addButton
@@ -173,7 +173,7 @@ module.exports = Tokamak =
     @modalPanel.destroy()
     @aboutModalPanel.destroy()
     @subscriptions.dispose()
-    @multirustToolchainView.destroy()
+    @rustupToolchainView.destroy()
     @cargoView.destroy()
     @tokamakView.destroy()
     @createProjectView.destroy()
@@ -183,7 +183,7 @@ module.exports = Tokamak =
   serialize: ->
     tokamakViewState: @tokamakView.serialize()
     cargoViewState: @cargoView.serialize()
-    multirustToolchainViewState: @multirustToolchainView.serialize()
+    rustupToolchainViewState: @rustupToolchainView.serialize()
     createProjectViewState: @createProjectView.serialize()
 
   toggle: (@modal)->
