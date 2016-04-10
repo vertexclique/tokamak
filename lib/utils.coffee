@@ -30,7 +30,7 @@ class Utils
           atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
   @detectBinaries: ->
-    for pkg in ["cargo", "racer", "multirust", "rustc"]
+    for pkg in ["cargo", "racer", "rustup", "rustc"]
       console.log(pkg)
       data = @runCommandOut("which", [pkg])
       console.log(data)
@@ -42,8 +42,8 @@ class Utils
           when "racer"
             atom.config.set("tokamak.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
             atom.config.set("racer.racerBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
-          when "multirust"
-            atom.config.set("tokamak.multirustBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
+          when "rustup"
+            atom.config.set("tokamak.rustupBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
           when "rustc"
             atom.config.set("tokamak.rustcBinPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
             atom.config.set("linter-rust.rustcPath", data.stdoutData.replace(/^\s+|\s+$/g, ""))
