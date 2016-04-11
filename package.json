@@ -17,6 +17,8 @@
     "atom-package-deps": "^4.0.1",
     "atom-space-pen-views": "^2.0.0",
     "fs-plus": "^2.0.0",
+    "request": "^2.67.0",
+    "tar": "^2.2.1",
     "temp": "^0.8.1",
     "underscore-plus": "^1.0.0"
   },
