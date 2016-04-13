@@ -20,7 +20,7 @@ class SourceUpdaterView
     @progressBar.value = 0
     @progressBar.max = 0
     @stepProgress = 0
-    @detailText.innerHTML = "#{@name}..."
+    @detailText.innerHTML = "#{name}..."
 
   setStepAmount: (size) ->
     @progressBar.max = size

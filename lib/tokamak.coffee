@@ -92,7 +92,7 @@ module.exports = Tokamak =
     Utils.watchConfig()
 
     setTimeout ->
-      SourceUpdater.updateSourceFiles()
+      SourceUpdater.checkForUpdate("beta")
     , 4000
 
 
