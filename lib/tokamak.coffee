@@ -1,9 +1,11 @@
+# Views
 TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
 MultirustToolchainView = require './multirust-toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 
+# Helpers
 Utils = require './utils'
 
 {consumeRunInTerminal} = require './terminal'
@@ -93,12 +95,15 @@ module.exports = Tokamak =
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
-    # Register command that toggles this view
+    # Register general commands
     @subscriptions.add atom.commands.add 'atom-workspace',
       'tokamak:detect-binaries': => Utils.detectBinaries()
       'tokamak:settings': => atom.workspace.open('atom://config/packages/tokamak/')
       'tokamak:run': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' run')
       'tokamak:test': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' test')
+      'tokamak:toggle-toolbar': =>
+        editor = atom.workspace.getActiveTextEditor()
+        atom.commands.dispatch(atom.views.getView(editor), "tool-bar:toggle")
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'

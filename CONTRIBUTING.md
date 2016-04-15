@@ -1,6 +1,6 @@
 # Contributing Code to the токамак
 
-This HACKING rules are exact copy of [Berlin Brain-Computer Interface](https://github.com/bbci) group.
+This CONTRIBUTING rules are exact copy of [Berlin Brain-Computer Interface](https://github.com/bbci) group.
 
 ## tl;dr
 

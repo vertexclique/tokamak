@@ -13,7 +13,7 @@
 * Code Linting
 
 ## Contributing
- Hacking rules are written in [HACKING.md](https://github.com/vertexclique/tokamak/blob/master/HACKING.md).
+ Contributing rules are written in [CONTRIBUTING.md](https://github.com/vertexclique/tokamak/blob/master/CONTRIBUTING.md).
 
 ## License
 
