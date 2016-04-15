@@ -1,6 +1,7 @@
 crypto = require 'crypto'
 fs = require 'fs-plus'
 request = require 'request'
+rimraf = require 'rimraf'
 tar = require 'tar'
 zlib = require 'zlib'
 
@@ -82,20 +83,42 @@ class SourceUpdater
             if fileChecksum is checksum
               progressNotification.updateState("Extracting")
 
-              sourceTar = fs.createReadStream(archivePath)
-              extractor = tar.Extract({path: folder + 'rust-sources'})
-                            .on('entry', (entry) -> progressNotification.updateExtractionProgress(entry.path))
-                            .on('error', (error) -> console.error(error))
+              rimraf(folder + "temporary-rust-sources/rustc-#{channelName}", fs, (error) ->
+                #TODO: Error handling.
+                sourceTar = fs.createReadStream(archivePath)
+                extractor = tar.Extract({path: folder + 'temporary-rust-sources'})
+                              .on('entry', (entry) -> progressNotification.updateExtractionProgress(entry.path))
+                              .on('error', (error) -> console.error(error))
 
-              sourceTar
-                .pipe(zlib.createGunzip())
-                .pipe(extractor)
-                .on('end', ->
-                  # Rename the new checksum file to 'installed' so future calls to checkForUpdate can use that for comparison.
-                  fs.rename(checksumFilePath, folder + "/source-checksums/installed-rustc-#{channelName}-src.tar.gz.sha256", (error) ->
-                    # TODO: Error handling
-                    atom.notifications.addSuccess("Successfully updated Rust's #{channelName} source!")
-                    progressNotification.dismiss()
+                sourceTar
+                  .pipe(zlib.createGunzip())
+                  .pipe(extractor)
+                  .on('end', ->
+                    # Now that we know that the extraction was successful
+                    # disable Racer and replace the installed source files.
+                    progressNotification.updateState("Finalizing")
+                    atom.packages.disablePackage("racer")
+
+                    tempFolder = folder + "temporary-rust-sources/rustc-#{channelName}"
+                    installedFolder = folder + "rust-sources/rustc-#{channelName}"
+
+                    rimraf(installedFolder, fs, (error) ->
+                      #TODO: Error handling.
+                      fs.makeTree(folder + "rust-sources", (error) ->
+                        #TODO: Error handling.
+                        fs.rename(tempFolder, installedFolder, (error) ->
+                          #TODO: Error handling.
+                          atom.packages.enablePackage("racer")
+
+                          # Rename the new checksum file to 'installed' so future calls to checkForUpdate can use that for comparison.
+                          fs.rename(checksumFilePath, folder + "/source-checksums/installed-rustc-#{channelName}-src.tar.gz.sha256", (error) ->
+                            # TODO: Error handling
+                            atom.notifications.addSuccess("Successfully updated Rust's #{channelName} source!")
+                            progressNotification.dismiss()
+                          )
+                        )
+                      )
+                    )
                   )
                 )
             else
