@@ -55,7 +55,6 @@ class CargoView extends View
     @cargoCmdRunner(@cmd, @cargoCmdExitCallback)
 
   cargoCmdExitCallback: (@cmd, code, stdoutData, stderrData) =>
-    console.log code
     if code != 0
       atom.notifications.addError("Tokamak: Cargo #{@cmd} failed!", {
         detail: "#{stderrData}"
@@ -76,16 +75,21 @@ class CargoView extends View
   cargoCmdRunner: (@cmd, callback) ->
     cargoPath = atom.config.get("tokamak.cargoBinPath")
     @projectPath ?= _.first(atom.project.getPaths())
-    process.chdir(@projectPath)
-    switch @cmd
-      when "build"
-        @runCargo(@cmd, cargoPath, "build", callback)
-      when "clean"
-        @runCargo(@cmd, cargoPath, "clean", callback)
-      when "rebuild"
-        @runCargo(@cmd, cargoPath, "clean", callback)
-        @runCargo(@cmd, cargoPath, "build", callback)
-      else null
+    fs.access(@projectPath, fs.F_OK, (err) =>
+      if !err?
+        process.chdir(@projectPath)
+        switch @cmd
+          when "build"
+            @runCargo(@cmd, cargoPath, "build", callback)
+          when "clean"
+            @runCargo(@cmd, cargoPath, "clean", callback)
+          when "rebuild"
+            @runCargo(@cmd, cargoPath, "clean", callback)
+            @runCargo(@cmd, cargoPath, "build", callback)
+          else null
+      else
+        atom.notifications.addError("Tokamak: Cargo #{@cmd} failed!")
+    )
 
   serialize: ->
 
