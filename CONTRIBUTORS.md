@@ -1,4 +1,4 @@
-Tokamak contributors (sorted alphabeticaly)
+токамак contributors (sorted alphabeticaly)
 ===========================================
 
 * **[Alexander Yashkin](https://github.com/ithamsteri)**
@@ -8,4 +8,4 @@ Tokamak contributors (sorted alphabeticaly)
 * **[Mahmut Bulut](https://github.com/vertexclique)**
 
   * Author and maintainer
-  * Most features develpopment
+  * Most features development
