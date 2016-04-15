@@ -4,6 +4,8 @@ fs = require 'fs-plus'
 _ = require 'underscore-plus'
 {$, TextEditorView, View} = require 'atom-space-pen-views'
 
+Utils = require './utils'
+
 module.exports =
 class CargoView extends View
   previouslyFocusedElement: null
@@ -23,9 +25,13 @@ class CargoView extends View
     @commandSubscription = atom.commands.add 'atom-workspace',
       'tokamak:create-cargo-lib': => @attach('lib')
       'tokamak:create-cargo-binary': => @attach('bin')
-      'tokamak:build': => @attachCargo('build')
+      'tokamak:build': =>
+        Utils.savePaneItems()
+        @attachCargo('build')
       'tokamak:clean': => @attachCargo('clean')
-      'tokamak:rebuild': => @attachCargo('rebuild')
+      'tokamak:rebuild': =>
+        Utils.savePaneItems()
+        @attachCargo('rebuild')
 
     @miniEditor.on 'blur', => @close()
     atom.commands.add @element,

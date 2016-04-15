@@ -91,3 +91,6 @@ class Utils
         dismissable: true,
       });
     status
+
+  @savePaneItems: ->
+    atom.workspace.getPaneItems().map (item) -> if item? then item.save()

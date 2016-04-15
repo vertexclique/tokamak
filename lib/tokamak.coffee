@@ -99,8 +99,12 @@ module.exports = Tokamak =
     @subscriptions.add atom.commands.add 'atom-workspace',
       'tokamak:detect-binaries': => Utils.detectBinaries()
       'tokamak:settings': => atom.workspace.open('atom://config/packages/tokamak/')
-      'tokamak:run': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' run')
-      'tokamak:test': => Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' test')
+      'tokamak:run': =>
+        Utils.savePaneItems()
+        Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' run')
+      'tokamak:test': =>
+        Utils.savePaneItems()
+        Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' test')
       'tokamak:toggle-toolbar': =>
         editor = atom.workspace.getActiveTextEditor()
         atom.commands.dispatch(atom.views.getView(editor), "tool-bar:toggle")
