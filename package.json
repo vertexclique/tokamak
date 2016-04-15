@@ -1,7 +1,7 @@
 {
   "name": "tokamak",
   "main": "./lib/tokamak",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Fusion Reactor for Rust - Atom Rust IDE",
   "keywords": [],
   "author": "Mahmut Bulut <vertexclique@gmail.com>",
