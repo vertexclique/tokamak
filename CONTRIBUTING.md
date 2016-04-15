@@ -113,24 +113,24 @@ clone of your fork.
 
 In order to actually update your fork with the new commits from the upstream
 repository, you need to pull in upstreams changes. Usually it's recommended to
-use your `master` branch to follow upstreams `master` branch. All your commits
+use your `develop` branch to follow upstreams `develop` branch. All your commits
 should go into separate branches.
 
-1. Checkout the `master` branch of your repository:
+1. Checkout the `develop` branch of your repository:
 
    ```sh
-   $ git checkout master
+   $ git checkout develop
    ```
 
-2. Pull in the changes from upstream's `master` branch:
+2. Pull in the changes from upstream's `develop` branch:
 
    ```sh
-   $ git pull upstream master
+   $ git pull upstream develop
    ```
 
-   Your local `master` branch is updated with the latest changes from upstream.
+   Your local `develop` branch is updated with the latest changes from upstream.
 
-3. To push your local `master` to the `master` branch of your fork:
+3. To push your local `develop` to the `develop` branch of your fork:
 
    ```sh
    $ git push
@@ -139,8 +139,8 @@ should go into separate branches.
 ## Working on a Feature Branch
 
 Let's assume you want to fix a bug or write a new feature. Instead of working
-directly on the `master` branch of the repository, it is often preferable to
-make changes in a separate branch and merge that branch back into `master` once
+directly on the `develop` branch of the repository, it is often preferable to
+make changes in a separate branch and merge that branch back into `develop` once
 everything is ready. Let's create a new branch for our feature, called
 `myfeature`:
 
@@ -164,8 +164,8 @@ $ git commit
 You can also switch back and forth between branches:
 
 ```sh
-$ git checkout master
-# you are now in the master branch
+$ git checkout develop
+# you are now in the develop branch
 
 $ git checkout myfeature
 # you're back in the feature branch
