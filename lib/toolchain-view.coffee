@@ -56,12 +56,14 @@ class ToolchainView extends SelectListView
   getToolchainList: (@items, callback) ->
       @cmd = "Listing toolchains"
       [responseSuccess, responseError] = ["", ""]
+      args = ""
       if @toolChain =="rustup"
-        args = ["toolchains","list"]
+        args = ["toolchain","list"]
       else if @toolChain == "multirust"
         args = ['list-toolchains']
       @runCommandOut(
         @toolBinPath
+        args
         stderr = (data) -> responseError += data.toString()
         stdout = (data) -> responseSuccess += data.toString()
         exit = (code) => callback(@cmd, code, responseSuccess, responseError, @items)
