@@ -7,6 +7,7 @@ AboutView = require './about-view'
 
 # Helpers
 Utils = require './utils'
+SourceUpdater = require './source-updater'
 
 {consumeRunInTerminal} = require './terminal'
 {BufferedProcess, CompositeDisposable} = require 'atom'
@@ -91,6 +92,11 @@ module.exports = Tokamak =
       Utils.detectBinaries()
 
     Utils.watchConfig()
+
+    setTimeout ->
+      SourceUpdater.checkForUpdate("beta")
+    , 4000
+
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
