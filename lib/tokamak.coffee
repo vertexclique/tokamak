@@ -117,8 +117,6 @@ module.exports = Tokamak =
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
 
-    @toolBar.addSpacer()
-
     @toolBar.addButton
       icon: 'package'
       callback: 'tokamak:create-project'
@@ -177,8 +175,6 @@ module.exports = Tokamak =
       icon: 'ion ion-nuclear'
       callback: 'tokamak:about'
       tooltip: 'About Tokamak'
-
-    @toolBar.addSpacer()
 
     @toolBar.onDidDestroy ->
       @toolBar = null
