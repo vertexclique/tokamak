@@ -93,4 +93,4 @@ class Utils
     status
 
   @savePaneItems: ->
-    atom.workspace.getPaneItems().map (item) -> if item? then item.save()
+    atom.workspace.getPaneItems().map (item) -> if item.save? then item.save()
