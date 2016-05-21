@@ -163,7 +163,7 @@ module.exports = Tokamak =
 
     @toolBar.addButton
       icon: 'tools'
-      callback: 'tokamak:multirust-select-toolchain'
+      callback: 'tokamak:select-toolchain'
       tooltip: 'Change Rust Toolchain'
 
     @toolBar.addButton
