@@ -54,7 +54,7 @@ class Utils
             atom.config.set("tokamak.rustcBinPath", data.stdoutData)
             atom.config.set("linter-rust.rustcPath", data.stdoutData)
       else
-        if (pkg == "multirust" || pkg ="rustup") && tool_found == true
+        if (pkg == "multirust" || pkg =="rustup") && tool_found == true
           console.log("Ignoring missing tool because alternative found")
         else
           atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
