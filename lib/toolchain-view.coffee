@@ -34,7 +34,7 @@ class ToolchainView extends SelectListView
       [responseSuccess, responseError] = ["", ""]
       @runCommandOut(
         @toolBinPath
-        ['default', item]
+        ['default', item.replace('(default)','')]
         stderr = (data) -> responseError += data.toString()
         stdout = (data) -> responseSuccess += data.toString()
         exit = (code) => callback(item, code, responseSuccess, responseError)
