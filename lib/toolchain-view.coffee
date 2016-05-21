@@ -16,9 +16,7 @@ class ToolchainView extends SelectListView
   initialize: ->
     super
     @toolBinPath = atom.config.get("tokamak.toolBinPath")
-    configtoolchain = atom.config.get("tokamak.toolChain")
-    if configtoolchain
-      @toolChain = configtoolchain
+    @toolChain ?= atom.config.get("tokamak.toolChain")
     @getToolchainList(@items, @toolchainExitCallback)
     @commandSubscription = atom.commands.add 'atom-workspace',
     'tokamak:toolBinPath-select-toolchain': => @attach()
