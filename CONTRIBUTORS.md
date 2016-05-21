@@ -11,6 +11,6 @@
   * Most features development
 
 
-  * **[Zaki Manian](https://github.com/zmanian)**
+* **[Zaki Manian](https://github.com/zmanian)**
 
-    * Added support for the rustup toolchain
+  * Added support for the rustup toolchain
