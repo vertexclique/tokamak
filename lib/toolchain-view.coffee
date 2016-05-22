@@ -8,7 +8,7 @@ class ToolchainView extends SelectListView
   cmd: null
   items: null
   toolBinPath: null
-  toolChain:"multirust"
+  toolChain: undefined
 
   constructor: (serializedState) ->
     super
@@ -16,7 +16,7 @@ class ToolchainView extends SelectListView
   initialize: ->
     super
     @toolBinPath = atom.config.get("tokamak.toolBinPath")
-    @toolChain ?= atom.config.get("tokamak.toolChain")
+    @toolChain = if atom.config.get("tokamak.toolChain") then atom.config.get("tokamak.toolChain") else 'multirust'
     @getToolchainList(@items, @toolchainExitCallback)
     @commandSubscription = atom.commands.add 'atom-workspace',
     'tokamak:select-toolchain': => @attach()
