@@ -120,27 +120,32 @@ module.exports = Tokamak =
     @toolBar.addSpacer()
 
     @toolBar.addButton
-      icon: 'ion ion-hammer'
+      icon: 'hammer'
+      iconset: 'ion'
       callback: 'tokamak:build'
       tooltip: 'Build'
 
     @toolBar.addButton
-      icon: 'fi fi-x'
+      icon: 'x'
+      iconset: 'fi'
       callback: 'tokamak:clean'
       tooltip: 'Clean'
 
     @toolBar.addButton
-      icon: 'ion ion-refresh'
+      icon: 'refresh'
+      iconset: 'ion'
       callback: 'tokamak:rebuild'
       tooltip: 'Rebuild'
 
     @toolBar.addButton
-      icon: 'ion ion-play'
+      icon: 'play'
+      iconset: 'ion'
       callback: 'tokamak:run'
       tooltip: 'Cargo Run'
 
     @toolBar.addButton
-      icon: 'fi fi-check'
+      icon: 'check'
+      iconset: 'fi'
       callback: 'tokamak:test'
       tooltip: 'Cargo Test'
 
@@ -167,7 +172,8 @@ module.exports = Tokamak =
       tooltip: 'Settings'
 
     @toolBar.addButton
-      icon: 'ion ion-nuclear'
+      icon: 'nuclear'
+      iconset: 'ion'
       callback: 'tokamak:about'
       tooltip: 'About Tokamak'
 
