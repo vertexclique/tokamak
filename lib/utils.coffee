@@ -30,7 +30,8 @@ class Utils
           atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
   @detectBinaries: ->
-    for pkg in ["cargo", "racer", "multirust", "rustc"]
+    tool_found = false
+    for pkg in ["cargo", "racer", "multirust", "rustc","rustup"]
       data = @findBinary([pkg])
 
       if data.status == 0 && data.stdoutData.length > 0
@@ -42,19 +43,28 @@ class Utils
             atom.config.set("tokamak.racerBinPath", data.stdoutData)
             atom.config.set("racer.racerBinPath", data.stdoutData)
           when "multirust"
-            atom.config.set("tokamak.multirustBinPath", data.stdoutData)
+            atom.config.set("tokamak.toolBinPath", data.stdoutData)
+            atom.config.set("tokamak.toolChain", "multirust")
+            tool_found = true
+          when "rustup"
+            atom.config.set("tokamak.toolBinPath", data.stdoutData)
+            atom.config.set("tokamak.toolChain", "rustup")
+            tool_found = true
           when "rustc"
             atom.config.set("tokamak.rustcBinPath", data.stdoutData)
             atom.config.set("linter-rust.rustcPath", data.stdoutData)
       else
-        atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
-        {
-          detail: "If you have a #{pkg} executable, set it in токамак settings.
-          If you are sure that PATH environment variable is set and includes
-          #{pkg}, please start Atom from command line.
-          ERROR: #{data.stderrData}"
-          dismissable: true
-        })
+        if (pkg == "multirust" || pkg =="rustup") && tool_found == true
+          console.log("Ignoring missing tool because alternative found")
+        else
+          atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
+          {
+            detail: "If you have a #{pkg} executable, set it in токамак settings.
+            If you are sure that PATH environment variable is set and includes
+            #{pkg}, please start Atom from command line.
+            ERROR: #{data.stderrData}"
+            dismissable: true
+          })
 
   @findBinary: (pkg) ->
     if process.platform is "win32"

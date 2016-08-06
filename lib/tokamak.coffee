@@ -1,7 +1,7 @@
 # Views
 TokamakView = require './tokamak-view'
 CargoView = require './cargo-view'
-MultirustToolchainView = require './multirust-toolchain-view'
+ToolchainView = require './toolchain-view'
 CreateProjectView = require './create-project-view'
 AboutView = require './about-view'
 
@@ -31,46 +31,51 @@ module.exports = Tokamak =
       type: 'string'
       default: '/usr/local/bin/cargo'
       order: 3
-    multirustBinPath:
-      title: 'Path to the Multirust rust installation manager'
+    toolBinPath:
+      title: 'Path to the Multirust or RustUp rust installation manager'
       type: 'string'
       default: '/usr/local/bin/multirust'
       order: 4
+    toolChain:
+      title: 'Select RustUp or Multirust for toolchain management'
+      type: 'string'
+      default: 'multirust'
+      order: 5
     racerBinPath:
       title: 'Path to the Racer executable'
       type: 'string'
       default: '/usr/local/bin/racer'
-      order: 5
+      order: 6
     rustSrcPath:
       title: 'Path to the Rust source code directory'
       type: 'string'
       default: '/usr/local/src/rust/src/'
-      order: 6
+      order: 7
     cargoHomePath:
       title: 'Cargo home directory (optional)'
       type: 'string'
       description: 'Needed when providing completions for Cargo crates when Cargo is installed in a non-standard location.'
       default: ''
-      order: 7
+      order: 8
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
       description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
-      order: 8
+      order: 9
     show:
       title: 'Show position for editor with definition'
       description: 'Choose one: Right, or New. If your view is vertically split, choosing Right will open the definition in the rightmost pane.'
       type: 'string'
       default: 'New'
       enum: ['Right', 'New']
-      order: 9
+      order: 10
 
     #TODO: Write autodetection of toolchain
 
   tokamakView: null
   cargoView: null
-  multirustToolchainView: null
+  toolchainView: null
   createProjectView: null
   aboutView: null
 
@@ -81,7 +86,7 @@ module.exports = Tokamak =
   activate: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)
     @cargoView = new CargoView(state.cargoViewState)
-    @multirustToolchainView = new MultirustToolchainView(state.multirustToolchainViewState)
+    @toolchainView = new ToolchainView(state.toolchainViewState)
     @createProjectView = new CreateProjectView(state.createProjectView)
     @aboutView = new AboutView(state.aboutView)
 
@@ -163,7 +168,7 @@ module.exports = Tokamak =
 
     @toolBar.addButton
       icon: 'tools'
-      callback: 'tokamak:multirust-select-toolchain'
+      callback: 'tokamak:select-toolchain'
       tooltip: 'Change Rust Toolchain'
 
     @toolBar.addButton
@@ -184,7 +189,7 @@ module.exports = Tokamak =
     @modalPanel.destroy()
     @aboutModalPanel.destroy()
     @subscriptions.dispose()
-    @multirustToolchainView.destroy()
+    @toolchainView.destroy()
     @cargoView.destroy()
     @tokamakView.destroy()
     @createProjectView.destroy()
@@ -194,7 +199,7 @@ module.exports = Tokamak =
   serialize: ->
     tokamakViewState: @tokamakView.serialize()
     cargoViewState: @cargoView.serialize()
-    multirustToolchainViewState: @multirustToolchainView.serialize()
+    toolchainViewState: @toolchainView.serialize()
     createProjectViewState: @createProjectView.serialize()
 
   toggle: (@modal)->
