@@ -22,7 +22,7 @@
         }
         {
           'label': 'Create Cargo Library Project'
-          'command': 'tokamak:create-cargo-lib'
+          'command': 'tokamak:create-cargo-library'
         }
         {
           'label': 'Build'
@@ -39,6 +39,10 @@
         {
           'label': 'Test'
           'command': 'tokamak:test'
+        }
+        {
+          'label': 'Format Code'
+          'command': 'tokamak:format-code'
         }
         {
           'label': 'Benchmark'

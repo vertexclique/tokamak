@@ -1,3 +1,8 @@
+## 0.2.8
+* Introduce tokamak project file
+* Make Rustup default toolchain manager and add RustUp support (thanks to @zmanian)
+* Auto formatting code and RustFmt support
+
 ## 0.2.7
 * Save files on run/build/test
 * Toolbar toggle added.

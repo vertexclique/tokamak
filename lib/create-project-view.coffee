@@ -7,7 +7,7 @@ class CreateProjectView extends SelectListView
   previouslyFocusedElement: null
   cmd: null
   items: [
-    "create-cargo-lib",
+    "create-cargo-library",
     "create-cargo-binary"
   ]
 
@@ -39,7 +39,7 @@ class CreateProjectView extends SelectListView
     console.log retval
 
   cancelled: ->
-    console.log("Tokamak: Create project view was cancelled")
+    console.log "Tokamak: Create project view was cancelled"
     return unless @panel.isVisible()
     @panel.hide()
     @previouslyFocusedElement?.focus()

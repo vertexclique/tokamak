@@ -2,6 +2,10 @@ child_process = require 'child_process'
 pjson = require '../package.json'
 
 _ = require 'underscore-plus'
+fs = require 'fs'
+path = require 'path'
+toml = require 'toml'
+toml.dumper = require 'json2toml'
 packageDeps = require 'atom-package-deps'
 {runInTerminal} = require './terminal'
 
@@ -22,16 +26,19 @@ class Utils
     pjson.version
 
   @installDependencies: ->
+    tokamakConfig = @parseTokamakConfig()
     packageList = _.map(atom.packages.getLoadedPackages(), (pkg) -> return pkg.name)
     tbInstalled = _.difference(pjson["package-deps"], packageList);
     if tbInstalled.length != 0
       packageDeps.install()
         .then ->
-          atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
+          if tokamakConfig?.options?.general_warnings
+            atom.notifications.addSuccess("Tokamak: Dependencies are installed!");
 
   @detectBinaries: ->
+    tokamakConfig = @parseTokamakConfig()
     tool_found = false
-    for pkg in ["cargo", "racer", "multirust", "rustc","rustup"]
+    for pkg in ["cargo", "racer", "multirust", "rustc", "rustup"]
       data = @findBinary([pkg])
 
       if data.status == 0 && data.stdoutData.length > 0
@@ -54,17 +61,18 @@ class Utils
             atom.config.set("tokamak.rustcBinPath", data.stdoutData)
             atom.config.set("linter-rust.rustcPath", data.stdoutData)
       else
-        if (pkg == "multirust" || pkg =="rustup") && tool_found == true
-          console.log("Ignoring missing tool because alternative found")
+        if (pkg == "multirust" || pkg == "rustup") && tool_found == true
+          console.log "Ignoring missing tool because alternative found"
         else
-          atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
-          {
-            detail: "If you have a #{pkg} executable, set it in токамак settings.
-            If you are sure that PATH environment variable is set and includes
-            #{pkg}, please start Atom from command line.
-            ERROR: #{data.stderrData}"
-            dismissable: true
-          })
+          if tokamakConfig?.options?.general_warnings
+            atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
+            {
+              detail: "If you have a #{pkg} executable, set it in токамак settings.
+              If you are sure that PATH environment variable is set and includes
+              #{pkg}, please start Atom from command line.
+              ERROR: #{data.stderrData}"
+              dismissable: true
+            })
 
   @findBinary: (pkg) ->
     if process.platform is "win32"
@@ -101,6 +109,36 @@ class Utils
         dismissable: true,
       });
     status
+
+  @isTokamakProject: ->
+    proj_root = if atom.project.rootDirectories[0]? then atom.project.rootDirectories[0] else "/"
+    config_file = path.join(proj_root.path, 'tokamak.toml')
+    fs.existsSync(config_file)
+
+  @parseTokamakConfig: ->
+    if @isTokamakProject()
+      config_file = path.join(atom.project.rootDirectories[0].path, 'tokamak.toml')
+      config_contents = fs.readFileSync(config_file, 'utf8');
+      config = toml.parse(config_contents);
+      config
+
+  @createDefaultTokamakConfig: ->
+    proj_path = atom.project.rootDirectories[0].path
+    @createDefaultTokamakConfig(proj_path)
+
+  @createDefaultTokamakConfig: (proj_path) ->
+    default_config =
+      helper:
+        path: ""
+      project:
+        auto_format_timing: 5
+      options:
+        general_warnings: false
+        save_buffers_before_run: false
+
+    tokamak_config_path = path.join(proj_path, 'tokamak.toml')
+    dumped_toml = toml.dumper(default_config)
+    fs.writeFileSync(tokamak_config_path, dumped_toml, 'utf8');
 
   @savePaneItems: ->
     atom.workspace.getPaneItems().map (item) -> if item.save? then item.save()

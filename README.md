@@ -11,6 +11,26 @@
 * Code Completion with Racer
 * Managing Rust toolchains
 * Code Linting
+* Project specific configuration
+* Code formatting
+
+## токамак project configuration
+
+токамак supports project configuration for each project. This helps to resolve
+editor and project options. `tokamak.toml` file will be used by helper in the future.
+It should resides in with same level of `Cargo.toml`.
+By default Cargo project generated with tokamak will create it also.
+Here is an example `tokamak.toml` file.
+
+```
+[helper]
+path = ""                                  # Reserved for future helper path and configurations
+[options]
+save_buffers_before_run = true             # Saving buffers before every command run
+general_warnings = true                    # Show general warnings
+[project]
+auto_format_timing = 5                     # Run auto formatting for project for specified interval (seconds)
+```
 
 ## Contributing
  Contributing rules are written in [CONTRIBUTING.md](https://github.com/vertexclique/tokamak/blob/master/CONTRIBUTING.md).

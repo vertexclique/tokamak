@@ -16,7 +16,7 @@ class ToolchainView extends SelectListView
   initialize: ->
     super
     @toolBinPath = atom.config.get("tokamak.toolBinPath")
-    @toolChain = if atom.config.get("tokamak.toolChain") then atom.config.get("tokamak.toolChain") else 'multirust'
+    @toolChain = if atom.config.get("tokamak.toolChain") then atom.config.get("tokamak.toolChain") else 'rustup'
     @getToolchainList(@items, @toolchainExitCallback)
     @commandSubscription = atom.commands.add 'atom-workspace',
     'tokamak:select-toolchain': => @attach()
@@ -45,10 +45,12 @@ class ToolchainView extends SelectListView
       atom.notifications.addError("Tokamak: Failed to change toolchain to #{item}", {
         detail: "#{stderrData}"
       })
+      @getToolchainList(@items, @toolchainExitCallback)
     else
       atom.notifications.addSuccess("Tokamak: Changed toolchain to #{item}", {
         detail: "#{stdoutData}"
       })
+      @getToolchainList(@items, @toolchainExitCallback)
       @cancelled()
 
   getToolchainList: (@items, callback) ->
@@ -86,7 +88,7 @@ class ToolchainView extends SelectListView
     @changeToolchain(item, @toolBinPathExitCallback)
 
   cancelled: ->
-    console.log("This view was cancelled")
+    console.log "This view was cancelled"
     return unless @panel.isVisible()
     @panel.hide()
     @previouslyFocusedElement?.focus()

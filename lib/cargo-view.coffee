@@ -2,6 +2,8 @@
 path = require 'path'
 fs = require 'fs-plus'
 _ = require 'underscore-plus'
+{CronJob} = require 'cron';
+{spawnSync} = require 'child_process',
 {$, TextEditorView, View} = require 'atom-space-pen-views'
 
 Utils = require './utils'
@@ -10,6 +12,7 @@ module.exports =
 class CargoView extends View
   previouslyFocusedElement: null
   mode: null
+  autoFormatJob: null
   projectPath: null
 
   constructor: (serializedState) ->
@@ -22,16 +25,21 @@ class CargoView extends View
       @div class: 'message', outlet: 'message'
 
   initialize: ->
+    @tokamakConfig = Utils.parseTokamakConfig()
     @commandSubscription = atom.commands.add 'atom-workspace',
-      'tokamak:create-cargo-lib': => @attach('lib')
+      'tokamak:create-cargo-library': => @attach('lib')
       'tokamak:create-cargo-binary': => @attach('bin')
       'tokamak:build': =>
-        Utils.savePaneItems()
+        if @tokamakConfig?.options?.save_buffers_before_run
+          Utils.savePaneItems()
         @attachCargo('build')
       'tokamak:clean': => @attachCargo('clean')
       'tokamak:rebuild': =>
-        Utils.savePaneItems()
+        if @tokamakConfig?.options?.save_buffers_before_run
+          Utils.savePaneItems()
         @attachCargo('rebuild')
+      'tokamak:format-code': =>
+        @attachCargo('fmt')
 
     @miniEditor.on 'blur', => @close()
     atom.commands.add @element,
@@ -86,6 +94,8 @@ class CargoView extends View
           when "rebuild"
             @runCargo(@cmd, cargoPath, "clean", callback)
             @runCargo(@cmd, cargoPath, "build", callback)
+          when "fmt"
+            @runCargo(@cmd, cargoPath, "fmt", callback)
           else null
       else
         atom.notifications.addError("Tokamak: Cargo #{@cmd} failed!")
@@ -115,10 +125,37 @@ class CargoView extends View
     packagePath = @getPackagePath()
     @initPackage(packagePath, callback)
 
+  autoFormatting: ->
+    cargoPath = atom.config.get("tokamak.cargoBinPath")
+    if @tokamakConfig?.project?.auto_format_timing?
+      if !@autoFormatJob?
+        timing = @tokamakConfig?.project?.auto_format_timing
+        @autoFormatJob = new CronJob(
+          cronTime: "#{timing} * * * * *"
+          onTick: =>
+            console.log("RustFmt running...")
+            spawnSync(cargoPath, ["fmt"])
+            console.log("RustFmt finished!")
+          start: false,
+        )
+        @autoFormatJob.start()
+        if @tokamakConfig?.options?.general_warnings
+          atom.notifications.addInfo("Tokamak: Auto Format started.")
+      else
+        console.log "Auto Format stopped."
+        if @tokamakConfig?.options?.general_warnings
+          atom.notifications.addInfo("Tokamak: Auto Format stopped.",
+          {
+            dismissable: true
+          })
+        @autoFormatJob.stop()
+        @autoFormatJob = null
+
   confirm: ->
     if @validPackagePath()
       @createPackage =>
         packagePath = @getPackagePath()
+        Utils.createDefaultTokamakConfig(packagePath)
         atom.open(pathsToOpen: [packagePath])
         @close()
 

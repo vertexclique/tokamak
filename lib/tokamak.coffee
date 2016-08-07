@@ -32,14 +32,14 @@ module.exports = Tokamak =
       default: '/usr/local/bin/cargo'
       order: 3
     toolBinPath:
-      title: 'Path to the Multirust or RustUp rust installation manager'
+      title: 'Path to the RustUp or Multirust rust installation manager'
       type: 'string'
-      default: '/usr/local/bin/multirust'
+      default: '$HOME/.cargo/bin/rustup'
       order: 4
     toolChain:
       title: 'Select RustUp or Multirust for toolchain management'
       type: 'string'
-      default: 'multirust'
+      default: 'rustup'
       order: 5
     racerBinPath:
       title: 'Path to the Racer executable'
@@ -84,6 +84,14 @@ module.exports = Tokamak =
   subscriptions: null
 
   activate: (state) ->
+    if Utils.isTokamakProject()
+      @tokamakConfig = Utils.parseTokamakConfig()
+      @launchActivation(state)
+      atom.config.set('tool-bar.visible', true)
+    else
+      atom.config.set('tool-bar.visible', false)
+
+  launchActivation: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)
     @cargoView = new CargoView(state.cargoViewState)
     @toolchainView = new ToolchainView(state.toolchainViewState)
@@ -105,14 +113,20 @@ module.exports = Tokamak =
       'tokamak:detect-binaries': => Utils.detectBinaries()
       'tokamak:settings': => atom.workspace.open('atom://config/packages/tokamak/')
       'tokamak:run': =>
-        Utils.savePaneItems()
+        if @tokamakConfig.options.save_buffers_before_run
+          Utils.savePaneItems()
         Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' run')
       'tokamak:test': =>
-        Utils.savePaneItems()
+        if @tokamakConfig.options.save_buffers_before_run
+          Utils.savePaneItems()
         Utils.openTerminal(atom.config.get("tokamak.cargoBinPath") + ' test')
       'tokamak:toggle-toolbar': =>
         editor = atom.workspace.getActiveTextEditor()
         atom.commands.dispatch(atom.views.getView(editor), "tool-bar:toggle")
+      'tokamak:create-tokamak-configuration': =>
+        Utils.createDefaultTokamakConfig()
+      'tokamak:toggle-auto-format-code': =>
+        @cargoView.autoFormatting()
 
   consumeToolBar: (toolBar) ->
     @toolBar = toolBar 'tokamak'
@@ -121,6 +135,12 @@ module.exports = Tokamak =
       icon: 'package'
       callback: 'tokamak:create-project'
       tooltip: 'Create Project'
+
+    @toolBar.addButton
+      icon: 'cube'
+      iconset: 'ion'
+      callback: 'tokamak:create-tokamak-configuration'
+      tooltip: 'Create Tokamak Configuration'
 
     @toolBar.addSpacer()
 
@@ -153,6 +173,12 @@ module.exports = Tokamak =
       iconset: 'fi'
       callback: 'tokamak:test'
       tooltip: 'Cargo Test'
+
+    @toolBar.addButton
+      icon: 'document-text'
+      iconset: 'ion'
+      callback: 'tokamak:format-code'
+      tooltip: 'Cargo Format'
 
     @toolBar.addButton
       icon: 'terminal'
@@ -197,10 +223,11 @@ module.exports = Tokamak =
     @toolBar?.removeItems()
 
   serialize: ->
-    tokamakViewState: @tokamakView.serialize()
-    cargoViewState: @cargoView.serialize()
-    toolchainViewState: @toolchainView.serialize()
-    createProjectViewState: @createProjectView.serialize()
+    if Utils.isTokamakProject()
+      tokamakViewState: @tokamakView.serialize()
+      cargoViewState: @cargoView.serialize()
+      toolchainViewState: @toolchainView.serialize()
+      createProjectViewState: @createProjectView.serialize()
 
   toggle: (@modal)->
     console.log 'Modal was toggled!'
