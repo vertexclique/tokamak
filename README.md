@@ -26,14 +26,14 @@ Here is an example `tokamak.toml` file.
 [helper]
 path = ""                                  # Reserved for future helper path and configurations
 [options]
-save_buffers_before_run = true             # Saving buffers before every command run
+save_buffers_before_run = true             # Saving buffers before every cargo command run
 general_warnings = true                    # Show general warnings
 [project]
 auto_format_timing = 5                     # Run auto formatting for project for specified interval (seconds)
 ```
 
 ## Contributing
- Contributing rules are written in [CONTRIBUTING.md](https://github.com/vertexclique/tokamak/blob/master/CONTRIBUTING.md).
+Contribution rules are written in [CONTRIBUTING.md](https://github.com/vertexclique/tokamak/blob/master/CONTRIBUTING.md).
 
 ## License
 
