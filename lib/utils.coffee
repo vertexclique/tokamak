@@ -112,7 +112,7 @@ class Utils
 
   @isTokamakProject: ->
     proj_root = if atom.project.rootDirectories[0]? then atom.project.rootDirectories[0] else "/"
-    config_file = path.join(proj_root.path, 'tokamak.toml')
+    config_file = path.join(proj_root, 'tokamak.toml')
     fs.existsSync(config_file)
 
   @parseTokamakConfig: ->
