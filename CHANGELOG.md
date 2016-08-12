@@ -1,3 +1,6 @@
+## 0.2.9
+* Fixes startup error (hope...)
+
 ## 0.2.8
 * Introduce tokamak project file
 * Make Rustup default toolchain manager and add RustUp support (thanks to @zmanian)
