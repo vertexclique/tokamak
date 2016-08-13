@@ -110,12 +110,12 @@ class Utils
       });
     status
 
-  getHomePath: ->
+  @getHomePath: ->
     os.homedir() ? "/"
 
   @isTokamakProject: ->
     dir = _.find(atom.project.getPaths(), (x) -> x?)
-    proj_path = if dir? then dir.toString() else getHomePath()
+    proj_path = if dir? then dir.toString() else @getHomePath()
     config_file = path.join(proj_path, 'tokamak.toml')
     console.log(config_file)
     fs.existsSync(config_file)
