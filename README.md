@@ -1,5 +1,9 @@
 # токамак
 
+## DISCLAIMER: As a maintainer of this project I heard a lot of good feedback from Rustaceans and continuous support but currently I am working on my other projects and I can't find time to work on токамак. But this is not an end! If you want to become a maintainer and work with токамак shoot me an e-mail.
+
+## P.S. I had started to implement a helper called Plasma some time ago. Currently, it is closed source and I will hand out that project to the future maintainer for her/his own good(for not dealing with Atom's coffeescript API) and she/he can make it open source.
+
 ![Tokamak](http://i.imgur.com/b0t3Hsf.png)
 
 **Fusion Reactor for Rust** -
