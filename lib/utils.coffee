@@ -39,7 +39,7 @@ class Utils
   @detectBinaries: ->
     tokamakConfig = @parseTokamakConfig()
     tool_found = false
-    for pkg in ["cargo", "racer", "multirust", "rustc", "rustup"]
+    for pkg in ["cargo", "racer", "rustup", "rustc", "multirust"]
       data = @findBinary([pkg])
 
       if data.status == 0 && data.stdoutData.length > 0
@@ -62,8 +62,8 @@ class Utils
             atom.config.set("tokamak.rustcBinPath", data.stdoutData)
             atom.config.set("linter-rust.rustcPath", data.stdoutData)
       else
-        if (pkg == "multirust" || pkg == "rustup") && tool_found == true
-          console.log "Ignoring missing tool because alternative found"
+        if (pkg == "rustup" || pkg == "multirust") && tool_found == true
+          atom.notifications.addInfo("Ignoring missing #{pkg} because alternative found")
         else
           if tokamakConfig?.options?.general_warnings
             atom.notifications.addError("Tokamak: #{pkg} is not installed or not found in PATH",
@@ -118,7 +118,6 @@ class Utils
     dir = _.find(atom.project.getPaths(), (x) -> x?)
     proj_path = if dir? then dir.toString() else @getHomePath()
     config_file = path.join(proj_path, 'tokamak.toml')
-    console.log(config_file)
     fs.existsSync(config_file)
 
   @parseTokamakConfig: ->
@@ -128,11 +127,24 @@ class Utils
       config = toml.parse(config_contents);
       config
 
-  @createDefaultTokamakConfig: ->
-    proj_path = atom.project.rootDirectories[0].path
-    @createDefaultTokamakConfig(proj_path)
+  @parseGlobalTokamakConfig: ->
+    home_path = @getHomePath()
+    config_file = path.join(home_path, 'tokamak.toml')
+    config_contents = fs.readFileSync(config_file, 'utf8');
+    config = toml.parse(config_contents);
+    config
 
-  @createDefaultTokamakConfig: (proj_path) ->
+  @createGlobalTokamakConfig: () ->
+    home_path = @getHomePath()
+    config_file = path.join(home_path, 'tokamak.toml')
+    if !fs.existsSync(config_file)
+      @createTokamakConfig(home_path)
+
+  @createDefaultTokamakConfig: () ->
+    proj_path = atom.project.rootDirectories[0].path
+    @createTokamakConfig(proj_path)
+
+  @createTokamakConfig: (proj_path) ->
     default_config =
       helper:
         path: ""
@@ -147,4 +159,9 @@ class Utils
     fs.writeFileSync(tokamak_config_path, dumped_toml, 'utf8');
 
   @savePaneItems: ->
-    atom.workspace.getPaneItems().map (item) -> if item.save? then item.save()
+    atom.workspace.getPaneItems().map (item) ->
+      if item.save?
+        try
+          item.save()
+        catch error
+          console.error error

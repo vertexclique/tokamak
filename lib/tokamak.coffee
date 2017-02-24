@@ -15,61 +15,67 @@ module.exports = Tokamak =
   # Config schema
   consumeRunInTerminal: consumeRunInTerminal
   config:
+    launchAlways:
+      title: 'Launch always on startup with Global Configuration'
+      type: 'boolean'
+      description: 'Launches токамак with Global configuration without looking for Project specific configuration file in Rust project.'
+      default: true
+      order: 1
     binaryDetection:
       title: 'Detect binaries on startup'
       type: 'boolean'
       description: 'Set toolchain executables if it is found under PATH.'
       default: true
-      order: 1
+      order: 2
     rustcBinPath:
       title: 'Path to the Rust compiler'
       type: 'string'
       default: '/usr/local/bin/rustc'
-      order: 2
+      order: 3
     cargoBinPath:
       title: 'Path to the Cargo package manager'
       type: 'string'
       default: '/usr/local/bin/cargo'
-      order: 3
+      order: 4
     toolBinPath:
       title: 'Path to the RustUp or Multirust rust installation manager'
       type: 'string'
       default: '$HOME/.cargo/bin/rustup'
-      order: 4
+      order: 5
     toolChain:
       title: 'Select RustUp or Multirust for toolchain management'
       type: 'string'
       default: 'rustup'
-      order: 5
+      order: 6
     racerBinPath:
       title: 'Path to the Racer executable'
       type: 'string'
       default: '/usr/local/bin/racer'
-      order: 6
+      order: 7
     rustSrcPath:
       title: 'Path to the Rust source code directory'
       type: 'string'
       default: '/usr/local/src/rust/src/'
-      order: 7
+      order: 8
     cargoHomePath:
       title: 'Cargo home directory (optional)'
       type: 'string'
       description: 'Needed when providing completions for Cargo crates when Cargo is installed in a non-standard location.'
       default: ''
-      order: 8
+      order: 9
     autocompleteBlacklist:
       title: 'Autocomplete Scope Blacklist'
       description: 'Autocomplete suggestions will not be shown when the cursor is inside the following comma-delimited scope(s).'
       type: 'string'
       default: '.source.go .comment'
-      order: 9
+      order: 10
     show:
       title: 'Show position for editor with definition'
       description: 'Choose one: Right, or New. If your view is vertically split, choosing Right will open the definition in the rightmost pane.'
       type: 'string'
       default: 'New'
       enum: ['Right', 'New']
-      order: 10
+      order: 11
 
     #TODO: Write autodetection of toolchain
 
@@ -84,12 +90,31 @@ module.exports = Tokamak =
   subscriptions: null
 
   activate: (state) ->
-    if Utils.isTokamakProject()
-      @tokamakConfig = Utils.parseTokamakConfig()
-      @launchActivation(state)
-      atom.config.set('tool-bar.visible', true)
+    launchAlways = atom.config.get("tokamak.launchAlways")
+    if launchAlways
+      if Utils.isTokamakProject()
+        @tokamakProjectConfigLaunch(state)
+      else
+        @tokamakGlobalConfigLaunch(state)
     else
-      atom.config.set('tool-bar.visible', false)
+      if Utils.isTokamakProject()
+        @tokamakProjectConfigLaunch(state)
+      else
+        @dontLoadTokamak()
+
+  tokamakGlobalConfigLaunch: (state) ->
+    Utils.createGlobalTokamakConfig()
+    @tokamakConfig = Utils.parseGlobalTokamakConfig()
+    @launchActivation(state)
+    atom.config.set('tool-bar.visible', true)
+
+  tokamakProjectConfigLaunch: (state) ->
+    @tokamakConfig = Utils.parseTokamakConfig()
+    @launchActivation(state)
+    atom.config.set('tool-bar.visible', true)
+
+  dontLoadTokamak: ->
+    atom.config.set('tool-bar.visible', false)
 
   launchActivation: (state) ->
     @tokamakView = new TokamakView(state.tokamakViewState)

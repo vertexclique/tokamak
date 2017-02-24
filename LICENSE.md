@@ -1,4 +1,4 @@
-Copyright (c) 2016 Mahmut Bulut
+Copyright (c) 2016-2017 Mahmut Bulut
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

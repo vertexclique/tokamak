@@ -1,3 +1,7 @@
+## 0.3.2
+* Fixes project specific launch. From now on if launchAlways box is checked it launches with global definition. If directory contains a cargo project with `tokamak.toml` it will load project-specific conf otherwise it loads global config.
+* Fixes auto save problems
+
 ## 0.2.9
 * Fixes startup error (hope...)
 
