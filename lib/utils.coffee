@@ -76,15 +76,13 @@ class Utils
             })
 
   @findBinary: (pkg) ->
-    if process.platform is "win32"
-      return @runCommandOut("where", [pkg]);
-    else
-      data = @runCommandOut("which", [pkg]);
+    command = if process.platform is "win32" then "where" else "which"
+    data = @runCommandOut(command, [pkg]);
 
-      if data.status == 0 && data.stdoutData.length >= 0
-        data.stdoutData = data.stdoutData.replace(/^\s+|\s+$/g, "")
+    if data.status == 0 && data.stdoutData.length >= 0
+      data.stdoutData = data.stdoutData.replace(/^\s+|\s+$/g, "")
 
-      return data
+    return data
 
   @watchConfig: ->
     atom.config.onDidChange "tokamak.autocompleteBlacklist", ({newValue, oldValue}) ->
