@@ -114,14 +114,18 @@ class Utils
   @getHomePath: ->
     os.homedir() ? "/"
 
+  @getProjectDir: ->
+    _.find(atom.project.getPaths(), (x) -> x?)
+
   @isTokamakProject: ->
-    dir = _.find(atom.project.getPaths(), (x) -> x?)
+    dir = @getProjectDir()
     proj_path = if dir? then dir.toString() else @getHomePath()
+    console.log proj_path
     config_file = path.join(proj_path, 'tokamak.toml')
     fs.existsSync(config_file)
 
   @parseTokamakConfig: ->
-    if @isTokamakProject()
+    if @isTokamakProject() && @getProjectDir()?
       config_file = path.join(atom.project.rootDirectories[0].path, 'tokamak.toml')
       config_contents = fs.readFileSync(config_file, 'utf8');
       config = toml.parse(config_contents);

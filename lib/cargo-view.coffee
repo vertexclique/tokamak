@@ -54,7 +54,7 @@ class CargoView extends View
     @panel ?= atom.workspace.addModalPanel(item: this, visible: false)
     @previouslyFocusedElement = $(document.activeElement)
     @panel.show()
-    @message.text("Enter cargo #{mode} project path")
+    @message.text("Enter cargo #{@mode} project path")
     editor = @miniEditor.getModel()
     editor.setText(process.env.HOME)
     @miniEditor.focus()

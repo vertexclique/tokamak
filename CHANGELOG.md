@@ -1,3 +1,10 @@
+## 0.4.0
+* Adds `atom-ide-ui` support.
+* Fixes cargo view variable globing.
+* Fixes #68 directory path problem on startup.
+* Adds state checker for RLS.
+* Adds RLS support for hover, click and go to definition.
+
 ## 0.3.2
 * Fixes project specific launch. From now on if launchAlways box is checked it launches with global definition. If directory contains a cargo project with `tokamak.toml` it will load project-specific conf otherwise it loads global config.
 * Fixes auto save problems
