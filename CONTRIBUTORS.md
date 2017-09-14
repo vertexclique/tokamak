@@ -1,4 +1,4 @@
-токамак contributors (sorted alphabeticaly)
+токамак contributors (sorted alphabetically)
 ===========================================
 
 * **[Alexander Yashkin](https://github.com/ithamsteri)**
@@ -9,7 +9,6 @@
 
   * Author and maintainer
   * Most features development
-
 
 * **[Zaki Manian](https://github.com/zmanian)**
 

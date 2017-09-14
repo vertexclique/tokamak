@@ -13,6 +13,12 @@
 * Code Linting
 * Project specific configuration
 * Code formatting
+* Go to definition
+* Hover for documentation
+* Find references
+* Outline for the file and the project
+* Autocomplete out-of-the-box
+* Code highlight
 
 ## токамак project configuration
 
@@ -32,12 +38,18 @@ general_warnings = true                    # Show general warnings
 auto_format_timing = 5                     # Run auto formatting for project for specified interval (seconds)
 ```
 
+## Upgrading to 0.4.0
+
+Racer support is removed because RLS is going to be the one that will replace Racer.
+Linter package is removed you can disable it in versions after `0.4.0`. Instead of linter, `diagnostics`
+will be used from `atom-ide-ui` package.
+
 ## Contributing
 Contribution rules are written in [CONTRIBUTING.md](https://github.com/vertexclique/tokamak/blob/master/CONTRIBUTING.md).
 
 ## License
 
-Copyright (c) 2016 Mahmut Bulut
+Copyright (c) 2016-2017 Mahmut Bulut
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
