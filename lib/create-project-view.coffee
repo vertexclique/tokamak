@@ -32,14 +32,10 @@ class CreateProjectView extends SelectListView
     "<li><span class='ion-flash'></span> #{eventName}</li>"
 
   confirmed: (item) ->
-    console.info("Tokamak: Calling event #{item}")
     commandName = "tokamak:#{item}"
-    console.log _.first($('atom-workspace'))
-    retval = atom.commands.dispatch(_.first($('atom-workspace')), commandName)
-    console.log retval
+    atom.commands.dispatch(_.first($('atom-workspace')), commandName)
 
   cancelled: ->
-    console.log "Tokamak: Create project view was cancelled"
     return unless @panel.isVisible()
     @panel.hide()
     @previouslyFocusedElement?.focus()

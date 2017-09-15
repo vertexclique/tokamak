@@ -118,7 +118,6 @@ class Utils
   @isTokamakProject: ->
     dir = @getProjectDir()
     proj_path = if dir? then dir.toString() else @getHomePath()
-    console.log proj_path
     config_file = path.join(proj_path, 'tokamak.toml')
     fs.existsSync(config_file)
 
@@ -128,6 +127,8 @@ class Utils
       config_contents = fs.readFileSync(config_file, 'utf8');
       config = toml.parse(config_contents);
       config
+    else
+      @parseGlobalTokamakConfig()
 
   @parseGlobalTokamakConfig: ->
     home_path = @getHomePath()

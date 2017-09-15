@@ -14,6 +14,7 @@ class CargoView extends View
   mode: null
   autoFormatJob: null
   projectPath: null
+  tokamakConfig: null
 
   constructor: (serializedState) ->
     super
