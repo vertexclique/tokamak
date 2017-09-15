@@ -28,6 +28,7 @@ notifications:
 branches:
   only:
     - master
+    - develop
 
 git:
   depth: 10
