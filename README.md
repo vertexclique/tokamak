@@ -4,6 +4,7 @@
 
 **Fusion Reactor for Rust** -
 [![apm](https://img.shields.io/apm/v/tokamak.svg?style=flat-square)](https://atom.io/packages/tokamak)
+[![Build Status](https://img.shields.io/travis/vertexclique/tokamak.svg?style=flat-square)]()
 
 * Syntax highlighting
 * Creating Cargo project
